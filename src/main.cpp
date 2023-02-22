@@ -5,6 +5,7 @@
 #include "VCCReader.h"
 #include "Lexer.h"
 #include "Parser.h"
+#include "CodeGenerator.h"
 
 using namespace common;
 using namespace vcc23;
@@ -29,6 +30,10 @@ int main(int argc, char *argv[])
   
   Parser parser(&lexer);
   parser.buildSyntaxTree();
+  
+  CodeGenerator codeGenerator(&reader, &parser);
+  codeGenerator.generateROMTable();
+  codeGenerator.generateProgramCode();
   
   return 0;
 }

@@ -4,6 +4,7 @@
 
 #include "VCCReader.h"
 #include "Lexer.h"
+#include "Parser.h"
 
 using namespace common;
 using namespace vcc23;
@@ -25,6 +26,9 @@ int main(int argc, char *argv[])
   
   Lexer lexer(&reader);
   lexer.tokenizeAndReduceToLexemeStream();
+  
+  Parser parser(&lexer);
+  parser.buildSyntaxTree();
   
   return 0;
 }

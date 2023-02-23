@@ -61,7 +61,7 @@ namespace vcc23
   class InstructionNode : public ASTNode
   {
   private:
-    Instruction opcode;
+    common::Instruction opcode;
     std::vector<std::unique_ptr<OperandNode>> operands;
   
   public:
@@ -73,9 +73,9 @@ namespace vcc23
     [[nodiscard]] ASTNodeType getType() const override;
     [[nodiscard]] std::string typeName() const override;
   
-    InstructionNode(Instruction code, const std::vector<unsigned long> &operandData);
+    InstructionNode(common::Instruction code, const std::vector<unsigned long> &operandData);
   
-    [[nodiscard]] Instruction getOpcode() const;
+    [[nodiscard]] common::Instruction getOpcode() const;
     [[nodiscard]] const std::vector<std::unique_ptr<OperandNode>> &getOperands() const;
   };
   

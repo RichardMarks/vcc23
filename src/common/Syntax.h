@@ -5,7 +5,7 @@
 #ifndef VCC23_SYNTAX_H
 #define VCC23_SYNTAX_H
 
-namespace vcc23 {
+namespace common {
   enum class Instruction : unsigned short
   {
     Unknown,

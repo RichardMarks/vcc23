@@ -10,6 +10,7 @@
 #include <string>
 
 using namespace vcc23;
+using namespace common;
 
 std::vector<LexemeType> DECLITREF{LexemeType::DecimalPrefix, LexemeType::DecimalNumber, LexemeType::AddressPrefix, LexemeType::DecimalNumber};
 std::vector<LexemeType> DECLIT{LexemeType::DecimalPrefix, LexemeType::DecimalNumber};

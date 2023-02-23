@@ -110,7 +110,7 @@ noexcept
   return "Instruction";
 };
 
-InstructionNode::InstructionNode(Instruction code, const std::vector<unsigned long> &operandData) : opcode(code)
+InstructionNode::InstructionNode(common::Instruction code, const std::vector<unsigned long> &operandData) : opcode(code)
 {
   std::cout << "InstructionNode(code:" << std::hex << (unsigned) code << ", operands:";
   for (auto val: operandData)
@@ -125,7 +125,7 @@ InstructionNode::InstructionNode(Instruction code, const std::vector<unsigned lo
   }
 }
 
-[[nodiscard]] Instruction InstructionNode::getOpcode() const
+[[nodiscard]] common::Instruction InstructionNode::getOpcode() const
 {
   return opcode;
 }

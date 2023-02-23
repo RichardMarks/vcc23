@@ -1,9 +1,13 @@
 
 add_library(vc23common
         ByteOrder.h
-        CartWriter.h
+        CartReader.cpp
+        CartReader.h
         CartWriter.cpp
-        CommandLine.h
+        CartWriter.h
         CommandLine.cpp
+        CommandLine.h
+        MemBlock.cpp
+        MemBlock.h
         Syntax.h
         )

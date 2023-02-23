@@ -10,7 +10,7 @@ set(VCC23_SOURCES
         SyntaxTree.cpp
         SyntaxTree.h
         VCCReader.cpp
-        main.cpp
+        vcc23Main.cpp
         )
 
 add_executable(vcc23 ${VCC23_SOURCES})

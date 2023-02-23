@@ -6,7 +6,7 @@ add_subdirectory(common)
 add_subdirectory(vcc23)
 
 # runtime
-# add_subdirectory(vc23)
+add_subdirectory(vc23)
 
 # decompiler
 # add_subdirectory(vcd23)

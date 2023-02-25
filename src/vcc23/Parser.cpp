@@ -132,8 +132,10 @@ void Parser::buildSyntaxTree()
   ReadInputDeviceInstructionSyntax readInputDeviceSyntax;
   PrintInstructionSyntax printSyntax;
   EndInstructionSyntax endSyntax;
+  NopInstructionSyntax nopSyntax;
   
   std::unordered_map<char, InstructionSyntax *> syntaxTable{
+    {'~', &nopSyntax},
     {'.', &assignSyntax},
     {'r', &readInputDeviceSyntax},
     {'p', &printSyntax},

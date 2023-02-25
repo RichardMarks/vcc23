@@ -12,6 +12,7 @@ set(VCC23_SOURCES
         Lexeme.h
         Lexer.cpp
         Lexer.h
+        MultiplyInstruction.cpp
         NopInstruction.cpp
         Parser.cpp
         Parser.h

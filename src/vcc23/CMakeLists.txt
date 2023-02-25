@@ -1,12 +1,24 @@
 
 set(VCC23_SOURCES
+        AssignInstruction.cpp
         CodeGenerator.cpp
         CodeGenerator.h
+        EndInstruction.cpp
+        Instructions.h
+        InstructionSyntax.cpp
+        InstructionSyntax.h
+        LexemeType.h
+        Lexeme.h
         Lexer.cpp
         Lexer.h
         Parser.cpp
         Parser.h
+        ParseUtils.cpp
+        ParseUtils.h
         ParserErrors.h
+        PrintInstruction.cpp
+        ReadInputDeviceInstruction.cpp
+        SyntaxPatterns.h
         SyntaxTree.cpp
         SyntaxTree.h
         VCCReader.cpp

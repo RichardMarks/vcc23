@@ -128,15 +128,17 @@ Parser::Parser(Lexer *lexer) : lexerPtr(lexer)
 void Parser::buildSyntaxTree()
 {
   
+  NopInstructionSyntax nopSyntax;
   AssignInstructionSyntax assignSyntax;
+  AddInstructionSyntax addSyntax;
   ReadInputDeviceInstructionSyntax readInputDeviceSyntax;
   PrintInstructionSyntax printSyntax;
   EndInstructionSyntax endSyntax;
-  NopInstructionSyntax nopSyntax;
   
   std::unordered_map<char, InstructionSyntax *> syntaxTable{
     {'~', &nopSyntax},
     {'.', &assignSyntax},
+    {'+', &addSyntax},
     {'r', &readInputDeviceSyntax},
     {'p', &printSyntax},
     {'q', &endSyntax}};

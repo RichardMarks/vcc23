@@ -131,6 +131,7 @@ void Parser::buildSyntaxTree()
   NopInstructionSyntax nopSyntax;
   AssignInstructionSyntax assignSyntax;
   AddInstructionSyntax addSyntax;
+  SubtractInstructionSyntax subSyntax;
   ReadInputDeviceInstructionSyntax readInputDeviceSyntax;
   PrintInstructionSyntax printSyntax;
   EndInstructionSyntax endSyntax;
@@ -139,6 +140,7 @@ void Parser::buildSyntaxTree()
     {'~', &nopSyntax},
     {'.', &assignSyntax},
     {'+', &addSyntax},
+    {'-', &subSyntax},
     {'r', &readInputDeviceSyntax},
     {'p', &printSyntax},
     {'q', &endSyntax}};

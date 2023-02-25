@@ -20,6 +20,7 @@ set(VCC23_SOURCES
         ParserErrors.h
         PrintInstruction.cpp
         ReadInputDeviceInstruction.cpp
+        SubtractInstruction.cpp
         SyntaxPatterns.h
         SyntaxTree.cpp
         SyntaxTree.h

@@ -6,71 +6,68 @@
 #define VC23_INSTRUCTIONS_H
 
 #include "InstructionSyntax.h"
+#include "ParseUtils.h"
 
 namespace vcc23
 {
-  class AssignmentInstructionSyntax : public InstructionSyntax
-  {
-  private:
-    unsigned long address{};
-    unsigned long sourceAddress{};
-    unsigned long literal{};
-    unsigned long size{};
+#define VCC23DECLAREINSTRUCTIONCLASS(CLASSNAME) \
+  class CLASSNAME##InstructionSyntax : public InstructionSyntax \
+  { \
+  public: \
+  bool peek( \
+    const std::vector<Lexeme> &inputLexemes, \
+    unsigned long inputOffset \
+  ) override; \
+  unsigned long consume( \
+    ProgramNode &program, \
+    const std::vector<Lexeme> &inputLexemes, \
+    unsigned long inputOffset \
+  ) override; }
   
-  public:
-    bool peek(std::vector<Lexeme> &input, unsigned long start) override;
-    
-    unsigned long consume() override;
-    
-    [[nodiscard]] std::unique_ptr<InstructionNode> getInstructionNode() const override;
-  };
+  // declare all the instruction classes
   
-  class ReadInputDeviceInstructionSyntax : public InstructionSyntax
-  {
-  private:
-    unsigned long address{};
-    unsigned long sourceAddress{};
-    unsigned long literal{};
-    unsigned long device{};
-    unsigned long size{};
+  VCC23DECLAREINSTRUCTIONCLASS(Nop);
   
-  public:
-    bool peek(std::vector<Lexeme> &input, unsigned long start) override;
-    
-    unsigned long consume() override;
-    
-    [[nodiscard]] std::unique_ptr<InstructionNode> getInstructionNode() const override;
-  };
+  VCC23DECLAREINSTRUCTIONCLASS(Assign);
   
-  class PrintInstructionSyntax : public InstructionSyntax
-  {
-  private:
-    unsigned long address{};
-    unsigned long sourceAddress{};
-    unsigned long literal{};
-    unsigned long size{};
+  VCC23DECLAREINSTRUCTIONCLASS(Add);
   
-  public:
-    bool peek(std::vector<Lexeme> &input, unsigned long start) override;
-    
-    unsigned long consume() override;
-    
-    [[nodiscard]] std::unique_ptr<InstructionNode> getInstructionNode() const override;
-  };
+  VCC23DECLAREINSTRUCTIONCLASS(Subtract);
   
-  class EndInstructionSyntax : public InstructionSyntax
-  {
-  private:
-    unsigned long exitCode{};
-    unsigned long size{};
+  VCC23DECLAREINSTRUCTIONCLASS(Multiply);
   
-  public:
-    bool peek(std::vector<Lexeme> &input, unsigned long start) override;
-    
-    unsigned long consume() override;
-    
-    [[nodiscard]] std::unique_ptr<InstructionNode> getInstructionNode() const override;
-  };
+  VCC23DECLAREINSTRUCTIONCLASS(Divide);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(Negate);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(Xor);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(And);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(Or);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(LeftShift);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(RightShift);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(Compare);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(Jump);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(MemorySelect);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(ReadInputDeviceImmediate);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(ReadInputDevice);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(WriteOutputDevice);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(Print);
+  
+  VCC23DECLAREINSTRUCTIONCLASS(End);
+
+#undef VCC23DECLAREINSTRUCTIONCLASS
+
 }
 
 #endif //VC23_INSTRUCTIONS_H

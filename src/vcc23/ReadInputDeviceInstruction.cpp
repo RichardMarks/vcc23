@@ -8,76 +8,24 @@
 
 using namespace vcc23;
 
-bool ReadInputDeviceInstructionSyntax::peek(std::vector<Lexeme> &input, unsigned long start)
+bool ReadInputDeviceInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned long start)
 {
-  address = 0;
-  sourceAddress = 0;
-  literal = 0;
-  device = 0;
-  size = 0;
   instruction = Instruction::Unknown;
   
-  if (!(input[start].isType(LexemeType::Instruction) && input[start].data == "r"))
+  if (!ParseUtils::matchInstructionToken("r", input, start))
   {
-    std::cout << "not read input device" << std::endl;
     return false;
-  }
-
-// ReadInputDeviceDecLitRef
-  std::vector<LexemeType> p1{
-    LexemeType::DecimalPrefix,
-    LexemeType::DecimalNumber,
-    LexemeType::DevicePrefix,
-    LexemeType::DecimalNumber,
-    LexemeType::DeviceSuffix,
-    LexemeType::AddressPrefix,
-    LexemeType::DecimalNumber};
-
-// ReadInputDeviceHexLitRef
-  std::vector<LexemeType> p2{
-    LexemeType::HexPrefix,
-    LexemeType::HexNumber,
-    LexemeType::DevicePrefix,
-    LexemeType::DecimalNumber,
-    LexemeType::DeviceSuffix,
-    LexemeType::AddressPrefix,
-    LexemeType::DecimalNumber};
-
-// ReadInputDeviceRefRef
-  std::vector<LexemeType> p3{
-    LexemeType::AddressPrefix,
-    LexemeType::DecimalNumber,
-    LexemeType::DevicePrefix,
-    LexemeType::DecimalNumber,
-    LexemeType::DeviceSuffix,
-    LexemeType::AddressPrefix,
-    LexemeType::DecimalNumber};
+  };
   
-  if (compare(input, start + 1, p1))
+  if (ParseUtils::compare(input, start + 1, SyntaxPatterns::decLitDevRef()))
   {
-// std::cout << "assign declitref" << std::endl;
     instruction = Instruction::ReadInputDeviceDecLitRef;
-    
-    literal = ParseUtils::parseULong(input[start + 2].data);
-    device = ParseUtils::parseULong(input[start + 4].data);
-    address = ParseUtils::translateAddressToken(input[start + 7].data);
-    size = 7;
-  } else if (compare(input, start + 1, p2))
+  } else if (ParseUtils::compare(input, start + 1, SyntaxPatterns::hexLitDevRef()))
   {
-// std::cout << "assign hexlitref" << std::endl;
     instruction = Instruction::ReadInputDeviceHexLitRef;
-    literal = ParseUtils::parseULong(input[start + 2].data, 16);
-    device = ParseUtils::parseULong(input[start + 4].data);
-    address = ParseUtils::translateAddressToken(input[start + 7].data);
-    size = 7;
-  } else if (compare(input, start + 1, p3))
+  } else if (ParseUtils::compare(input, start + 1, SyntaxPatterns::refDevRef()))
   {
-// std::cout << "assign refref" << std::endl;
     instruction = Instruction::ReadInputDeviceRefRef;
-    sourceAddress = ParseUtils::translateAddressToken(input[start + 2].data);
-    device = ParseUtils::parseULong(input[start + 4].data);
-    address = ParseUtils::translateAddressToken(input[start + 7].data);
-    size = 7;
   }
   
   if (instruction == Instruction::Unknown)
@@ -88,20 +36,42 @@ bool ReadInputDeviceInstructionSyntax::peek(std::vector<Lexeme> &input, unsigned
   return true;
 }
 
-unsigned long ReadInputDeviceInstructionSyntax::consume()
+unsigned long ReadInputDeviceInstructionSyntax::consume(
+  ProgramNode &program,
+  const std::vector<Lexeme> &inputLexemes,
+  unsigned long inputOffset
+)
 {
-  return size;
-}
-
-[[nodiscard]] std::unique_ptr<InstructionNode> ReadInputDeviceInstructionSyntax::getInstructionNode() const
-{
-  if (instruction == Instruction::ReadInputDeviceRefRef)
+  switch (instruction)
   {
-    std::vector<unsigned long> operands{
-      sourceAddress, device, address};
-    return std::make_unique<InstructionNode>(instruction, std::move(operands));
+  case Instruction::ReadInputDeviceDecLitRef:
+  {
+    return build(
+      ParseUtils::matchDecLitDevRef,
+      program,
+      inputLexemes,
+      inputOffset
+    );
   }
-  std::vector<unsigned long> operands{
-    literal, device, address};
-  return std::make_unique<InstructionNode>(instruction, std::move(operands));
+  case Instruction::ReadInputDeviceHexLitRef:
+  {
+    return build(
+      ParseUtils::matchHexLitDevRef,
+      program,
+      inputLexemes,
+      inputOffset
+    );
+  }
+  case Instruction::ReadInputDeviceRefRef:
+  {
+    return build(
+      ParseUtils::matchRefDevRef,
+      program,
+      inputLexemes,
+      inputOffset
+    );
+  }
+  default:
+    return 0;
+  }
 }

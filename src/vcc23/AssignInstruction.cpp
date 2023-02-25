@@ -8,41 +8,24 @@
 
 using namespace vcc23;
 
-bool AssignmentInstructionSyntax::peek(std::vector<Lexeme> &input, unsigned long start)
+bool AssignInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned long start)
 {
-  address = 0;
-  sourceAddress = 0;
-  literal = 0;
-  size = 0;
   instruction = Instruction::Unknown;
   
-  if (!(input[start].isType(LexemeType::Instruction) && input[start].data == "."))
+  if (!ParseUtils::matchInstructionToken(".", input, start))
   {
-    std::cout << "not assignment" << std::endl;
     return false;
-  }
+  };
   
-  if (compare(input, start + 1, SyntaxPatterns::decLitRef()))
+  if (ParseUtils::compare(input, start + 1, SyntaxPatterns::decLitRef()))
   {
-// std::cout << "assign declitref" << std::endl;
     instruction = Instruction::AssignDecLitRef;
-    literal = ParseUtils::parseULong(input[start + 2].data);
-    address = ParseUtils::translateAddressToken(input[start + 4].data);
-    size = 4;
-  } else if (compare(input, start + 1, SyntaxPatterns::hexLitRef()))
+  } else if (ParseUtils::compare(input, start + 1, SyntaxPatterns::hexLitRef()))
   {
-// std::cout << "assign hexlitref" << std::endl;
     instruction = Instruction::AssignHexLitRef;
-    literal = ParseUtils::parseULong(input[start + 2].data, 16);
-    address = ParseUtils::translateAddressToken(input[start + 4].data);
-    size = 4;
-  } else if (compare(input, start + 1, SyntaxPatterns::refRef()))
+  } else if (ParseUtils::compare(input, start + 1, SyntaxPatterns::refRef()))
   {
-// std::cout << "assign refref" << std::endl;
     instruction = Instruction::AssignRefRef;
-    sourceAddress = ParseUtils::translateAddressToken(input[start + 2].data);
-    address = ParseUtils::translateAddressToken(input[start + 4].data);
-    size = 4;
   }
   
   if (instruction == Instruction::Unknown)
@@ -53,20 +36,42 @@ bool AssignmentInstructionSyntax::peek(std::vector<Lexeme> &input, unsigned long
   return true;
 }
 
-unsigned long AssignmentInstructionSyntax::consume()
+unsigned long AssignInstructionSyntax::consume(
+  ProgramNode &program,
+  const std::vector<Lexeme> &inputLexemes,
+  unsigned long inputOffset
+)
 {
-  return size;
-}
-
-[[nodiscard]] std::unique_ptr<InstructionNode> AssignmentInstructionSyntax::getInstructionNode() const
-{
-  if (instruction == Instruction::AssignRefRef)
+  switch (instruction)
   {
-    std::vector<unsigned long> operands{
-      sourceAddress, address};
-    return std::make_unique<InstructionNode>(instruction, std::move(operands));
+  case Instruction::AssignDecLitRef:
+  {
+    return build(
+      ParseUtils::matchDecLitRef,
+      program,
+      inputLexemes,
+      inputOffset);
   }
-  std::vector<unsigned long> operands{
-    literal, address};
-  return std::make_unique<InstructionNode>(instruction, std::move(operands));
+  
+  case Instruction::AssignHexLitRef:
+  {
+    return build(
+      ParseUtils::matchHexLitRef,
+      program,
+      inputLexemes,
+      inputOffset);
+  }
+  
+  case Instruction::AssignRefRef:
+  {
+    return build(
+      ParseUtils::matchRefRef,
+      program,
+      inputLexemes,
+      inputOffset);
+  }
+  
+  default:
+    return 0;
+  }
 }

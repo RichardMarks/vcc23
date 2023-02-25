@@ -8,34 +8,25 @@
 
 using namespace vcc23;
 
-bool EndInstructionSyntax::peek(std::vector<Lexeme> &input, unsigned long start)
+bool EndInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned long start)
 {
-  exitCode = 0;
-  size = 0;
   instruction = Instruction::Unknown;
   
-  if (!(input[start].isType(LexemeType::Instruction) && input[start].data == "q"))
+  if (!ParseUtils::matchInstructionToken("q", input, start))
   {
-    std::cout << "not end program" << std::endl;
     return false;
-  }
+  };
   
   instruction = Instruction::EndWithSuccess;
   
   try
   {
-    if (compare(input, start + 1, SyntaxPatterns::decLit()))
+    if (ParseUtils::compare(input, start + 1, SyntaxPatterns::decLit()))
     {
-// std::cout << "assign declitref" << std::endl;
       instruction = Instruction::EndWithDecLitExitCode;
-      exitCode = ParseUtils::parseULong(input[start + 2].data);
-      size = 2;
-    } else if (compare(input, start + 1, SyntaxPatterns::hexLit()))
+    } else if (ParseUtils::compare(input, start + 1, SyntaxPatterns::hexLit()))
     {
-// std::cout << "assign hexlitref" << std::endl;
       instruction = Instruction::EndWithHexLitExitCode;
-      exitCode = ParseUtils::parseULong(input[start + 2].data, 16);
-      size = 2;
     }
   }
   catch (const std::exception &ex)
@@ -52,18 +43,42 @@ bool EndInstructionSyntax::peek(std::vector<Lexeme> &input, unsigned long start)
   return true;
 }
 
-unsigned long EndInstructionSyntax::consume()
+unsigned long EndInstructionSyntax::consume(
+  ProgramNode &program,
+  const std::vector<Lexeme> &inputLexemes,
+  unsigned long inputOffset
+)
 {
-  return size;
-}
-
-[[nodiscard]] std::unique_ptr<InstructionNode> EndInstructionSyntax::getInstructionNode() const
-{
-  if (instruction == Instruction::EndWithSuccess)
+  switch (instruction)
   {
-    std::vector<unsigned long> operands;
-    return std::make_unique<InstructionNode>(instruction, std::move(operands));
+  case Instruction::EndWithDecLitExitCode:
+  {
+    return build(
+      ParseUtils::matchDecLit,
+      program,
+      inputLexemes,
+      inputOffset
+    );
   }
-  std::vector<unsigned long> operands{exitCode};
-  return std::make_unique<InstructionNode>(instruction, std::move(operands));
+  case Instruction::EndWithHexLitExitCode:
+  {
+    return build(
+      ParseUtils::matchHexLit,
+      program,
+      inputLexemes,
+      inputOffset
+    );
+  }
+  case Instruction::EndWithSuccess:
+  {
+    return build(
+      ParseUtils::matchNONE,
+      program,
+      inputLexemes,
+      inputOffset
+    );
+  }
+  default:
+    return 0;
+  }
 }

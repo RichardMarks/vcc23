@@ -11,30 +11,39 @@
 
 #include <vector>
 #include <unordered_map>
+#include <functional>
 
 namespace vcc23
 {
   using common::Instruction;
-  
-  constexpr const char *SYNTAX_DECIMAL_LITERAL_REF = "DCR";
+  struct MatchResult;
+  typedef std::function<MatchResult(const std::vector<Lexeme> &inputLexemes,
+                                    unsigned long inputOffset)> OperandSequenceMatchFunction;
   
   class InstructionSyntax
   {
   protected:
-    static std::unordered_map<std::string, std::vector<LexemeType>> syntaxPatterns;
-    
     Instruction instruction{Instruction::Unknown};
     
-    static bool compare(std::vector<Lexeme> &input, unsigned long start, const std::vector<LexemeType> &pattern);
+    unsigned long build(
+      const OperandSequenceMatchFunction &matchFunction,
+      ProgramNode &program,
+      const std::vector<Lexeme> &inputLexemes,
+      unsigned long inputOffset
+    );
   
   public:
     
-    virtual bool peek(std::vector<Lexeme> &input, unsigned long start) = 0;
+    virtual bool peek(
+      const std::vector<Lexeme> &inputLexemes,
+      unsigned long inputOffset
+    ) = 0;
     
-    virtual unsigned long consume() = 0;
-    
-    [[nodiscard]] virtual std::unique_ptr<InstructionNode> getInstructionNode() const = 0;
-    
+    virtual unsigned long consume(
+      ProgramNode &program,
+      const std::vector<Lexeme> &inputLexemes,
+      unsigned long inputOffset
+    ) = 0;
   };
 }
 

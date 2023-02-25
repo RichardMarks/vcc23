@@ -25,6 +25,17 @@ namespace vcc23
       return singletonInstance;
     }
     
+    const std::vector<LexemeType> DECLITDEVREF
+      {
+        LexemeType::DecimalPrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::DevicePrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::DeviceSuffix,
+        LexemeType::AddressPrefix,
+        LexemeType::DecimalNumber
+      };
+    
     const std::vector<LexemeType> DECLITREF
       {
         LexemeType::DecimalPrefix,
@@ -36,6 +47,17 @@ namespace vcc23
     const std::vector<LexemeType> DECLIT
       {
         LexemeType::DecimalPrefix,
+        LexemeType::DecimalNumber
+      };
+    
+    const std::vector<LexemeType> HEXLITDEVREF
+      {
+        LexemeType::HexPrefix,
+        LexemeType::HexNumber,
+        LexemeType::DevicePrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::DeviceSuffix,
+        LexemeType::AddressPrefix,
         LexemeType::DecimalNumber
       };
     
@@ -51,6 +73,17 @@ namespace vcc23
       {
         LexemeType::HexPrefix,
         LexemeType::HexNumber
+      };
+    
+    const std::vector<LexemeType> REFDEVREF
+      {
+        LexemeType::AddressPrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::DevicePrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::DeviceSuffix,
+        LexemeType::AddressPrefix,
+        LexemeType::DecimalNumber
       };
     
     const std::vector<LexemeType> REFREF
@@ -71,8 +104,14 @@ namespace vcc23
     
     SyntaxPatterns &operator=(SyntaxPatterns const &) = delete;
     
+    static const std::vector<LexemeType> &decLitDevRef()
+    { return SyntaxPatterns::instance().DECLITDEVREF; };
+    
     static const std::vector<LexemeType> &decLitRef()
     { return SyntaxPatterns::instance().DECLITREF; };
+    
+    static const std::vector<LexemeType> &hexLitDevRef()
+    { return SyntaxPatterns::instance().HEXLITDEVREF; };
     
     static const std::vector<LexemeType> &hexLitRef()
     { return SyntaxPatterns::instance().HEXLITREF; };
@@ -85,6 +124,9 @@ namespace vcc23
     
     static const std::vector<LexemeType> &ref()
     { return SyntaxPatterns::instance().REF; };
+    
+    static const std::vector<LexemeType> &refDevRef()
+    { return SyntaxPatterns::instance().REFDEVREF; };
     
     static const std::vector<LexemeType> &refRef()
     { return SyntaxPatterns::instance().REFREF; };

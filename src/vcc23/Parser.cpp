@@ -128,7 +128,7 @@ Parser::Parser(Lexer *lexer) : lexerPtr(lexer)
 void Parser::buildSyntaxTree()
 {
   
-  AssignmentInstructionSyntax assignSyntax;
+  AssignInstructionSyntax assignSyntax;
   ReadInputDeviceInstructionSyntax readInputDeviceSyntax;
   PrintInstructionSyntax printSyntax;
   EndInstructionSyntax endSyntax;
@@ -157,10 +157,9 @@ void Parser::buildSyntaxTree()
         auto syntax = syntaxTable.at(token.data[0]);
         if (syntax->peek(lexemes, currentIndex))
         {
-          auto advanced = syntax->consume();
+          auto advanced = syntax->consume(*program, lexemes, currentIndex);
           // std::cout << "advancing " << advanced << std::endl;
           currentIndex += advanced;
-          program->addInstructionNode(std::move(syntax->getInstructionNode()));
         }
       } else
       {

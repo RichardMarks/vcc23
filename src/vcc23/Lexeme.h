@@ -5,6 +5,10 @@
 #ifndef VC23_LEXEME_H
 #define VC23_LEXEME_H
 
+#include <iomanip>
+#include <iostream>
+#include <memory>
+
 namespace vcc23
 {
   class Lexeme

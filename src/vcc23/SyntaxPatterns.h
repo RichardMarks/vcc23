@@ -99,10 +99,40 @@ namespace vcc23
         LexemeType::AddressPrefix,
         LexemeType::DecimalNumber
       };
+    
+    const std::vector<LexemeType> INSDECLIT
+      {
+        LexemeType::Instruction,
+        LexemeType::DecimalPrefix,
+        LexemeType::DecimalNumber
+      };
+    
+    const std::vector<LexemeType> INSHEXLIT
+      {
+        LexemeType::Instruction,
+        LexemeType::HexPrefix,
+        LexemeType::HexNumber
+      };
+    
+    const std::vector<LexemeType> INSREF
+      {
+        LexemeType::Instruction,
+        LexemeType::AddressPrefix,
+        LexemeType::DecimalNumber
+      };
   public:
     SyntaxPatterns(SyntaxPatterns const &) = delete;
     
     SyntaxPatterns &operator=(SyntaxPatterns const &) = delete;
+    
+    static const std::vector<LexemeType> &insDecLit()
+    { return SyntaxPatterns::instance().INSDECLIT; };
+    
+    static const std::vector<LexemeType> &insHexLit()
+    { return SyntaxPatterns::instance().INSHEXLIT; };
+    
+    static const std::vector<LexemeType> &insRef()
+    { return SyntaxPatterns::instance().INSREF; };
     
     static const std::vector<LexemeType> &decLitDevRef()
     { return SyntaxPatterns::instance().DECLITDEVREF; };

@@ -133,6 +133,7 @@ void Parser::buildSyntaxTree()
   AddInstructionSyntax addSyntax;
   SubtractInstructionSyntax subSyntax;
   MultiplyInstructionSyntax mulSyntax;
+  DivideInstructionSyntax divSyntax;
   ReadInputDeviceInstructionSyntax readInputDeviceSyntax;
   PrintInstructionSyntax printSyntax;
   EndInstructionSyntax endSyntax;
@@ -143,6 +144,7 @@ void Parser::buildSyntaxTree()
     {'+', &addSyntax},
     {'-', &subSyntax},
     {'*', &mulSyntax},
+    {'/', &divSyntax},
     {'r', &readInputDeviceSyntax},
     {'p', &printSyntax},
     {'q', &endSyntax}};

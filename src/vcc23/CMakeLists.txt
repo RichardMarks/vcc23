@@ -5,6 +5,7 @@ set(VCC23_SOURCES
         AssignInstruction.cpp
         CodeGenerator.cpp
         CodeGenerator.h
+        CompareInstruction.cpp
         DivideInstruction.cpp
         EndInstruction.cpp
         Instructions.h

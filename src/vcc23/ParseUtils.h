@@ -94,6 +94,18 @@ namespace vcc23
       const std::vector<Lexeme> &inputLexemes,
       unsigned long inputOffset);
     
+    static MatchResult matchDecLitDev(
+      const std::vector<Lexeme> &inputLexemes,
+      unsigned long inputOffset);
+    
+    static MatchResult matchHexLitDev(
+      const std::vector<Lexeme> &inputLexemes,
+      unsigned long inputOffset);
+    
+    static MatchResult matchRefDev(
+      const std::vector<Lexeme> &inputLexemes,
+      unsigned long inputOffset);
+    
   };
   
 }

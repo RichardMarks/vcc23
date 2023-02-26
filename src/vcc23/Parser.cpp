@@ -145,6 +145,7 @@ void Parser::buildSyntaxTree()
   JumpInstructionSyntax jmpSyntax;
   ReadInputDeviceImmediateInstructionSyntax ridSyntax;
   ReadInputDeviceInstructionSyntax readInputDeviceSyntax;
+  WriteOutputDeviceInstructionSyntax writeOutputDeviceSyntax;
   PrintInstructionSyntax printSyntax;
   EndInstructionSyntax endSyntax;
   
@@ -166,6 +167,7 @@ void Parser::buildSyntaxTree()
     {'g', &jmpSyntax},
     {'i', &ridSyntax},
     {'r', &readInputDeviceSyntax},
+    {'o', &writeOutputDeviceSyntax},
     {'p', &printSyntax},
     {'q', &endSyntax}};
   

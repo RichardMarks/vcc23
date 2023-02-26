@@ -35,6 +35,7 @@ set(VCC23_SOURCES
         SyntaxTree.h
         VCCReader.cpp
         vcc23Main.cpp
+        WriteOutputDeviceInstruction.cpp
         XorInstruction.cpp
         ZCompareInstruction.cpp
         )

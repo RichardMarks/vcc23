@@ -331,3 +331,45 @@ MatchResult ParseUtils::matchDevRef(const std::vector<Lexeme> &inputLexemes, uns
   };
   return result;
 }
+
+MatchResult ParseUtils::matchDecLitDev(const std::vector<Lexeme> &inputLexemes, unsigned long inputOffset)
+{
+  auto &litLexeme = inputLexemes[inputOffset + 2];
+  auto &devLexeme = inputLexemes[inputOffset + 4];
+  
+  MatchResult result{
+    5, {
+      ParseUtils::parseULong(litLexeme.data),
+      ParseUtils::parseULong(devLexeme.data),
+    }
+  };
+  return result;
+}
+
+MatchResult ParseUtils::matchHexLitDev(const std::vector<Lexeme> &inputLexemes, unsigned long inputOffset)
+{
+  auto &litLexeme = inputLexemes[inputOffset + 2];
+  auto &devLexeme = inputLexemes[inputOffset + 4];
+  
+  MatchResult result{
+    5, {
+      ParseUtils::parseULong(litLexeme.data, 16),
+      ParseUtils::parseULong(devLexeme.data),
+    }
+  };
+  return result;
+}
+
+MatchResult ParseUtils::matchRefDev(const std::vector<Lexeme> &inputLexemes, unsigned long inputOffset)
+{
+  auto &refLexeme = inputLexemes[inputOffset + 2];
+  auto &devLexeme = inputLexemes[inputOffset + 4];
+  
+  MatchResult result{
+    5, {
+      ParseUtils::translateAddressToken(refLexeme.data),
+      ParseUtils::parseULong(devLexeme.data),
+    }
+  };
+  return result;
+}

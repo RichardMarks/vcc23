@@ -129,6 +129,33 @@ namespace vcc23
         LexemeType::AddressPrefix,
         LexemeType::DecimalNumber
       };
+    
+    const std::vector<LexemeType> REFDEV
+      {
+        LexemeType::AddressPrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::DevicePrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::DeviceSuffix
+      };
+    
+    const std::vector<LexemeType> DECLITDEV
+      {
+        LexemeType::DecimalPrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::DevicePrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::DeviceSuffix
+      };
+    
+    const std::vector<LexemeType> HEXLITDEV
+      {
+        LexemeType::HexPrefix,
+        LexemeType::HexNumber,
+        LexemeType::DevicePrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::DeviceSuffix
+      };
   public:
     SyntaxPatterns(SyntaxPatterns const &) = delete;
     
@@ -169,6 +196,15 @@ namespace vcc23
     
     static const std::vector<LexemeType> &devRef()
     { return SyntaxPatterns::instance().DEVREF; };
+    
+    static const std::vector<LexemeType> &refDev()
+    { return SyntaxPatterns::instance().REFDEV; };
+    
+    static const std::vector<LexemeType> &decLitDev()
+    { return SyntaxPatterns::instance().DECLITDEV; };
+    
+    static const std::vector<LexemeType> &hexLitDev()
+    { return SyntaxPatterns::instance().HEXLITDEV; };
     
     static const std::vector<LexemeType> &refRef()
     { return SyntaxPatterns::instance().REFREF; };

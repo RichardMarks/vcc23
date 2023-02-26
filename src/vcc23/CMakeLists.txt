@@ -29,6 +29,7 @@ set(VCC23_SOURCES
         SyntaxTree.h
         VCCReader.cpp
         vcc23Main.cpp
+        XorInstruction.cpp
         )
 
 add_executable(vcc23 ${VCC23_SOURCES})

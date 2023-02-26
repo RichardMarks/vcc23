@@ -135,6 +135,7 @@ void Parser::buildSyntaxTree()
   MultiplyInstructionSyntax mulSyntax;
   DivideInstructionSyntax divSyntax;
   NegateInstructionSyntax negSyntax;
+  XorInstructionSyntax xorSyntax;
   ReadInputDeviceInstructionSyntax readInputDeviceSyntax;
   PrintInstructionSyntax printSyntax;
   EndInstructionSyntax endSyntax;
@@ -147,6 +148,7 @@ void Parser::buildSyntaxTree()
     {'*', &mulSyntax},
     {'/', &divSyntax},
     {'_', &negSyntax},
+    {'^', &xorSyntax},
     {'r', &readInputDeviceSyntax},
     {'p', &printSyntax},
     {'q', &endSyntax}};

@@ -35,6 +35,7 @@ set(VCC23_SOURCES
         VCCReader.cpp
         vcc23Main.cpp
         XorInstruction.cpp
+        ZCompareInstruction.cpp
         )
 
 add_executable(vcc23 ${VCC23_SOURCES})

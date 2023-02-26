@@ -141,6 +141,7 @@ void Parser::buildSyntaxTree()
   LeftShiftInstructionSyntax leftShiftSyntax;
   RightShiftInstructionSyntax rightShiftSyntax;
   CompareInstructionSyntax cmpSyntax;
+  ZCompareInstructionSyntax zcmpSyntax;
   ReadInputDeviceInstructionSyntax readInputDeviceSyntax;
   PrintInstructionSyntax printSyntax;
   EndInstructionSyntax endSyntax;
@@ -159,6 +160,7 @@ void Parser::buildSyntaxTree()
     {'<', &leftShiftSyntax},
     {'>', &rightShiftSyntax},
     {'=', &cmpSyntax},
+    {'z', &zcmpSyntax},
     {'r', &readInputDeviceSyntax},
     {'p', &printSyntax},
     {'q', &endSyntax}};

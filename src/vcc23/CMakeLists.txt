@@ -1,6 +1,7 @@
 
 set(VCC23_SOURCES
         AddInstruction.cpp
+        AndInstruction.cpp
         AssignInstruction.cpp
         CodeGenerator.cpp
         CodeGenerator.h

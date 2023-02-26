@@ -14,6 +14,7 @@ set(VCC23_SOURCES
         Lexer.cpp
         Lexer.h
         MultiplyInstruction.cpp
+        NegateInstruction.cpp
         NopInstruction.cpp
         Parser.cpp
         Parser.h

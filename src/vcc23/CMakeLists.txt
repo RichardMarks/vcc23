@@ -10,6 +10,7 @@ set(VCC23_SOURCES
         Instructions.h
         InstructionSyntax.cpp
         InstructionSyntax.h
+        LeftShiftInstruction.cpp
         LexemeType.h
         Lexeme.h
         Lexer.cpp

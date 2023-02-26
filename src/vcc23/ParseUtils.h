@@ -73,6 +73,10 @@ namespace vcc23
       const std::vector<Lexeme> &inputLexemes,
       unsigned long inputOffset);
     
+    static MatchResult matchDevRef(
+      const std::vector<Lexeme> &inputLexemes,
+      unsigned long inputOffset);
+    
     static MatchResult matchRefRef(
       const std::vector<Lexeme> &inputLexemes,
       unsigned long inputOffset);

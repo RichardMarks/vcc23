@@ -318,3 +318,16 @@ MatchResult ParseUtils::matchInsRef(const std::vector<Lexeme> &inputLexemes, uns
   };
   return result;
 }
+
+MatchResult ParseUtils::matchDevRef(const std::vector<Lexeme> &inputLexemes, unsigned long inputOffset)
+{
+  auto &devLexeme = inputLexemes[inputOffset + 2];
+  auto &refLexeme = inputLexemes[inputOffset + 5];
+  MatchResult result{
+    5, {
+      ParseUtils::parseULong(devLexeme.data),
+      ParseUtils::translateAddressToken(refLexeme.data)
+    }
+  };
+  return result;
+}

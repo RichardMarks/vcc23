@@ -75,6 +75,15 @@ namespace vcc23
         LexemeType::HexNumber
       };
     
+    const std::vector<LexemeType> DEVREF
+      {
+        LexemeType::DevicePrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::DeviceSuffix,
+        LexemeType::AddressPrefix,
+        LexemeType::DecimalNumber
+      };
+    
     const std::vector<LexemeType> REFDEVREF
       {
         LexemeType::AddressPrefix,
@@ -157,6 +166,9 @@ namespace vcc23
     
     static const std::vector<LexemeType> &refDevRef()
     { return SyntaxPatterns::instance().REFDEVREF; };
+    
+    static const std::vector<LexemeType> &devRef()
+    { return SyntaxPatterns::instance().DEVREF; };
     
     static const std::vector<LexemeType> &refRef()
     { return SyntaxPatterns::instance().REFREF; };

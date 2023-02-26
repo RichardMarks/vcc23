@@ -17,6 +17,7 @@ set(VCC23_SOURCES
         MultiplyInstruction.cpp
         NegateInstruction.cpp
         NopInstruction.cpp
+        OrInstruction.cpp
         Parser.cpp
         Parser.h
         ParseUtils.cpp

@@ -139,6 +139,7 @@ void Parser::buildSyntaxTree()
   AndInstructionSyntax andSyntax;
   OrInstructionSyntax orSyntax;
   LeftShiftInstructionSyntax leftShiftSyntax;
+  RightShiftInstructionSyntax rightShiftSyntax;
   ReadInputDeviceInstructionSyntax readInputDeviceSyntax;
   PrintInstructionSyntax printSyntax;
   EndInstructionSyntax endSyntax;
@@ -155,6 +156,7 @@ void Parser::buildSyntaxTree()
     {'&', &andSyntax},
     {'|', &orSyntax},
     {'<', &leftShiftSyntax},
+    {'>', &rightShiftSyntax},
     {'r', &readInputDeviceSyntax},
     {'p', &printSyntax},
     {'q', &endSyntax}};

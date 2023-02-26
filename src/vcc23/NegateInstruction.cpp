@@ -16,7 +16,7 @@ bool NegateInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned lo
   if (!ParseUtils::matchInstructionToken("_", input, start))
   {
     return false;
-  };
+  }
   
   if (ParseUtils::compare(input, start + 1, SyntaxPatterns::ref()))
   {

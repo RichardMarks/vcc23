@@ -14,7 +14,7 @@ bool NopInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned long 
   {
     instruction = Instruction::Nop;
     return true;
-  };
+  }
   
   instruction = Instruction::Unknown;
   return false;

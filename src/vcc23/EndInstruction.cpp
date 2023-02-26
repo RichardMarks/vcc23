@@ -15,7 +15,7 @@ bool EndInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned long 
   if (!ParseUtils::matchInstructionToken("q", input, start))
   {
     return false;
-  };
+  }
   
   instruction = Instruction::EndWithSuccess;
   

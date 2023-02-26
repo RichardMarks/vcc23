@@ -8,24 +8,21 @@
 
 using namespace vcc23;
 
-bool AddInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned long start)
+bool RightShiftInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned long start)
 {
   instruction = Instruction::Unknown;
   
-  if (!ParseUtils::matchInstructionToken(".", input, start))
+  if (!ParseUtils::matchInstructionToken(">", input, start))
   {
     return false;
   }
   
   if (ParseUtils::compare(input, start + 1, SyntaxPatterns::decLitRef()))
   {
-    instruction = Instruction::AddDecLitRef;
+    instruction = Instruction::RightShiftDecLitRef;
   } else if (ParseUtils::compare(input, start + 1, SyntaxPatterns::hexLitRef()))
   {
-    instruction = Instruction::AddHexLitRef;
-  } else if (ParseUtils::compare(input, start + 1, SyntaxPatterns::refRef()))
-  {
-    instruction = Instruction::AddRefRef;
+    instruction = Instruction::RightShiftHexLitRef;
   }
   
   if (instruction == Instruction::Unknown)
@@ -36,7 +33,7 @@ bool AddInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned long 
   return true;
 }
 
-unsigned long AddInstructionSyntax::consume(
+unsigned long RightShiftInstructionSyntax::consume(
   ProgramNode &program,
   const std::vector<Lexeme> &inputLexemes,
   unsigned long inputOffset
@@ -44,7 +41,7 @@ unsigned long AddInstructionSyntax::consume(
 {
   switch (instruction)
   {
-  case Instruction::AddDecLitRef:
+  case Instruction::RightShiftDecLitRef:
   {
     return build(
       ParseUtils::matchDecLitRef,
@@ -53,19 +50,10 @@ unsigned long AddInstructionSyntax::consume(
       inputOffset);
   }
   
-  case Instruction::AddHexLitRef:
+  case Instruction::RightShiftHexLitRef:
   {
     return build(
       ParseUtils::matchHexLitRef,
-      program,
-      inputLexemes,
-      inputOffset);
-  }
-  
-  case Instruction::AddRefRef:
-  {
-    return build(
-      ParseUtils::matchRefRef,
       program,
       inputLexemes,
       inputOffset);

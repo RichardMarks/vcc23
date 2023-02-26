@@ -15,7 +15,7 @@ bool ReadInputDeviceInstructionSyntax::peek(const std::vector<Lexeme> &input, un
   if (!ParseUtils::matchInstructionToken("r", input, start))
   {
     return false;
-  };
+  }
   
   if (ParseUtils::compare(input, start + 1, SyntaxPatterns::decLitDevRef()))
   {

@@ -15,7 +15,7 @@ bool PrintInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned lon
   if (!ParseUtils::matchInstructionToken("p", input, start))
   {
     return false;
-  };
+  }
   
   if (ParseUtils::compare(input, start + 1, SyntaxPatterns::decLitRef()))
   {

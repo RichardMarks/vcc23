@@ -12,7 +12,7 @@ bool SubtractInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned 
 {
   instruction = Instruction::Unknown;
   
-  if (!ParseUtils::matchInstructionToken(".", input, start))
+  if (!ParseUtils::matchInstructionToken("-", input, start))
   {
     return false;
   }

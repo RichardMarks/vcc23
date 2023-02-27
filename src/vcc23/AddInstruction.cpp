@@ -12,7 +12,7 @@ bool AddInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned long 
 {
   instruction = Instruction::Unknown;
   
-  if (!ParseUtils::matchInstructionToken(".", input, start))
+  if (!ParseUtils::matchInstructionToken("+", input, start))
   {
     return false;
   }

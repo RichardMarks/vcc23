@@ -16,7 +16,7 @@ VCCReader::VCCReader() = default;
 
 void VCCReader::loadVCCFromFile(const std::string &fileName, bool clearAlreadyLoaded)
 {
-  std::regex INSTRUCTION_REGEX("^[~.+-*/_^&|<>=zg`iropq]");
+  std::regex INSTRUCTION_REGEX("^[~.+\\-*/_^&|<>=zg`iropq]");
   std::regex LABEL_REGEX(R"(\b\w+\b\s*:)");
   
   if (clearAlreadyLoaded)

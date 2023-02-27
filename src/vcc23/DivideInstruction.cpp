@@ -12,7 +12,7 @@ bool DivideInstructionSyntax::peek(const std::vector<Lexeme> &input, unsigned lo
 {
   instruction = Instruction::Unknown;
   
-  if (!ParseUtils::matchInstructionToken(".", input, start))
+  if (!ParseUtils::matchInstructionToken("/", input, start))
   {
     return false;
   }

@@ -181,7 +181,7 @@ void Parser::buildSyntaxTree()
   while (currentIndex < lexemes.size())
   {
     auto token = lexemes.at(currentIndex);
-    std::cout << "[" << std::setw(4) << currentIndex << "] " << token << std::endl;
+    std::cout << "PARSER: [" << std::setw(4) << std::dec << currentIndex << "] " << token << std::endl;
     if (token.isType(LexemeType::Instruction))
     {
       if (token.data.size() == 1 && syntaxTable.count(token.data[0]))
@@ -192,11 +192,17 @@ void Parser::buildSyntaxTree()
           auto advanced = syntax->consume(*program, lexemes, currentIndex);
           // std::cout << "advancing " << advanced << std::endl;
           currentIndex += advanced;
+        } else
+        {
+          std::cerr << "peek failed" << std::endl;
         }
       } else
       {
         std::cerr << "unknown token: " << token.data << std::endl;
       }
+    } else
+    {
+      std::cerr << "unexpected token type: 0x" << std::hex << static_cast<int>(token.type) << std::dec << std::endl;
     }
     currentIndex++;
   }

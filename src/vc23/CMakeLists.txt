@@ -2,6 +2,9 @@
 set(VC23_SOURCES
         ConsoleRuntime.cpp
         ConsoleRuntime.h
+        Devices.h
+        InputDevices.cpp
+        OutputDevices.cpp
         Runtime.cpp
         Runtime.h
         vc23Main.cpp

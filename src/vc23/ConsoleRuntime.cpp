@@ -6,7 +6,10 @@
 #include <iomanip>
 #include <sstream>
 
+#include <utility>
 #include <vector>
+#include <functional>
+#include <memory>
 
 #include "ConsoleRuntime.h"
 #include "CartReader.h"
@@ -14,6 +17,40 @@
 
 using namespace vc23;
 using namespace common;
+
+class MemoryCopyInputDevice : public StandardInputDevice
+{
+private:
+  std::function<unsigned char()> readData;
+  std::function<void(unsigned char)> writeData;
+
+public:
+  ~MemoryCopyInputDevice() override = default;
+  
+  void setRWFns(std::function<unsigned char()> readDataFn,
+                std::function<void(unsigned char)> writeDataFn)
+  {
+    readData = std::move(readDataFn);
+    writeData = std::move(writeDataFn);
+  }
+  
+  [[nodiscard]] unsigned short getID() const override
+  {
+    return 1;
+  }
+  
+  [[nodiscard]] std::string getName() const override
+  {
+    return "MEMORY COPY";
+  }
+  
+  unsigned char readU8() override
+  {
+    auto value = readData();
+    writeData(value);
+    return value;
+  }
+};
 
 void ConsoleRuntime::setStatus(RuntimeStatus nextStatus)
 {
@@ -25,6 +62,22 @@ void ConsoleRuntime::initialize()
   ram = std::make_unique<MemBlock>(constants::RUNTIME_RAM_SIZE);
   data = std::make_unique<MemBlock>();
   code = std::make_unique<MemBlock>();
+  
+  auto stdInDev = std::make_unique<StandardInputDevice>();
+  inputDevices.emplace(stdInDev->getID(), std::move(stdInDev));
+  
+  auto memCpyDev = std::make_unique<MemoryCopyInputDevice>();
+  memCpyDev->setRWFns([&]()
+                      {
+                        return readU8FromDataBlock(data->tell());
+                      }, [&](unsigned char value)
+                      {
+                        writeU8ToRAM(value, ram->tell());
+                      });
+  inputDevices.emplace(memCpyDev->getID(), std::move(memCpyDev));
+  
+  auto stdOutDev = std::make_unique<StandardOutputDevice>();
+  outputDevices.emplace(stdOutDev->getID(), std::move(stdOutDev));
   
   auto numOps = sizeof(OPERATION_NAMES) / sizeof(const char *);
   for (auto i = 0; i < numOps; i++)
@@ -483,15 +536,39 @@ void ConsoleRuntime::initialize()
   // INPUT DEVICES
   
   VC23REGISTEROPERATIONMETHOD(Instruction::ReadInputDeviceRef, {
-    // TODO: implementation
+    auto deviceIndex = operands.at(0);
+    auto address = operands.at(1);
+    
+    auto &device = inputDevices.at(deviceIndex);
+    auto value = device->readU8();
+    writeU8ToRAM(value, address);
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::ReadInputDeviceDecLitRef, {
-    // TODO: implementation
+    auto literal = operands.at(0);
+    auto deviceIndex = operands.at(1);
+    auto address = operands.at(2);
+    
+    auto &device = inputDevices.at(deviceIndex);
+    for (auto k = 0; k < literal; k++)
+    {
+      auto value = device->readU8();
+      writeU8ToRAM(value, address + k);
+    }
+    
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::ReadInputDeviceHexLitRef, {
-    // TODO: implementation
+    auto literal = operands.at(0);
+    auto deviceIndex = operands.at(1);
+    auto address = operands.at(2);
+    
+    auto &device = inputDevices.at(deviceIndex);
+    for (auto k = 0; k < literal; k++)
+    {
+      auto value = device->readU8();
+      writeU8ToRAM(value, address + k);
+    }
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::ReadInputDeviceRefRef, {
@@ -499,31 +576,54 @@ void ConsoleRuntime::initialize()
     auto deviceIndex = operands.at(1);
     auto targetAddress = operands.at(2);
     
-    // TODO: implement devices properly
-    if (deviceIndex == 1)
+    auto &device = inputDevices.at(deviceIndex);
+    auto n = readU8FromRAM(sourceAddress);
+    for (auto k = 0; k < n; k++)
     {
-      // memory copy device
-      auto n = readU8FromRAM(sourceAddress);
-      for (auto k = 0; k < n; k++)
-      {
-        auto byt = readU8FromDataBlock(k);
-        writeU8ToRAM(byt, targetAddress + k);
-      }
+      ram->seek(targetAddress + k);
+      auto value = device->readU8();
+      writeU8ToRAM(value, targetAddress + k);
     }
+
+//    // TODO: implement devices properly
+//    if (deviceIndex == 1)
+//    {
+//      // memory copy device
+//      auto n = readU8FromRAM(sourceAddress);
+//      for (auto k = 0; k < n; k++)
+//      {
+//        auto byt = readU8FromDataBlock(k);
+//        writeU8ToRAM(byt, targetAddress + k);
+//      }
+//    }
   });
   
   // OUTPUT DEVICES
   
   VC23REGISTEROPERATIONMETHOD(Instruction::WriteOutputDeviceDecLit, {
-    // TODO: implementation
+    auto literal = operands.at(0);
+    auto deviceIndex = operands.at(0);
+    
+    auto &device = outputDevices.at(deviceIndex);
+    device->writeU8(literal);
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::WriteOutputDeviceHexLit, {
-    // TODO: implementation
+    auto literal = operands.at(0);
+    auto deviceIndex = operands.at(0);
+    
+    auto &device = outputDevices.at(deviceIndex);
+    device->writeU8(literal);
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::WriteOutputDeviceRef, {
-    // TODO: implementation
+    // o @3 {0}
+    auto address = operands.at(0);
+    auto deviceIndex = operands.at(0);
+    auto value = readU8FromRAM(address);
+    
+    auto &device = outputDevices.at(deviceIndex);
+    device->writeU8(value);
   });
   
   // PRINTING STRINGS

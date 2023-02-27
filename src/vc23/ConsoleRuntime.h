@@ -8,6 +8,7 @@
 #include "Runtime.h"
 #include "MemBlock.h"
 #include "Syntax.h"
+#include "Devices.h"
 
 #include <memory>
 
@@ -62,6 +63,9 @@ namespace vc23
     std::unique_ptr<MemBlock> ram;
     std::unique_ptr<MemBlock> data;
     std::unique_ptr<MemBlock> code;
+    
+    std::unordered_map<unsigned short, std::unique_ptr<InputDevice>> inputDevices;
+    std::unordered_map<unsigned short, std::unique_ptr<OutputDevice>> outputDevices;
     
     std::unordered_map<Instruction, std::string> operationTable;
     

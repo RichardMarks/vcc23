@@ -1,6 +1,9 @@
 
 set(VC23_SOURCES
-        vc23.h
+        ConsoleRuntime.cpp
+        ConsoleRuntime.h
+        Runtime.cpp
+        Runtime.h
         vc23Main.cpp
         )
 

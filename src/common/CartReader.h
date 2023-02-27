@@ -23,13 +23,13 @@ namespace common
     
     void readFromFile(const std::string &fileName);
     
-    std::vector<unsigned char> getData() const;
+    [[nodiscard]] std::vector<unsigned char> getData() const;
     
-    std::vector<unsigned char> getCode() const;
+    [[nodiscard]] std::vector<unsigned char> getCode() const;
     
-    std::string getName() const;
+    [[nodiscard]] std::string getName() const;
     
-    bool isValid() const
+    [[nodiscard]] bool isValid() const
     { return valid; }
   };
 }

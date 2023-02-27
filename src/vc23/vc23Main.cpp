@@ -2,8 +2,8 @@
 // Created by Richard Marks on 2/22/23.
 //
 
-#include "vc23.h"
 #include "CommandLine.h"
+#include "ConsoleRuntime.h"
 
 using namespace vc23;
 
@@ -19,23 +19,43 @@ int main(int argc, char *argv[])
     
     std::string cartFile = cmdLine.getArg(0);
     
-    Cart cart;
-    CPU cpu;
-    
-    cart.load(cartFile);
+    ConsoleRuntime runtime;
     
     if (cmdLine.hasFlag("debug"))
     {
-      cpu.setFlags(CpuFlags::EnableDebug | CpuFlags::EnableStdoutDevice);
+      runtime.setFlag(RuntimeFlags::Debug);
     }
-    cpu.boot(cart);
     
-    while (cpu.running())
+    if (cmdLine.hasFlag("trace"))
     {
-      cpu.step();
+      runtime.setFlag(RuntimeFlags::Trace);
     }
+    
+    if (cmdLine.hasFlag("tracedump"))
+    {
+      runtime.setFlag(RuntimeFlags::TraceDump);
+    }
+    
+    runtime.initialize();
+    
+    runtime.load(cartFile);
+    
+    if (cmdLine.hasFlag("debug"))
+    {
+      runtime.dumpDataBlock();
+      runtime.dumpCodeBlock();
+    }
+    
+    while (runtime.running())
+    {
+      runtime.step();
+    }
+    
+    runtime.shutdown();
+    
+    return runtime.getExitCode();
   
   VC23_SAFE_BLOCK_END
   
-  return 0;
+  return EXIT_FAILURE;
 }

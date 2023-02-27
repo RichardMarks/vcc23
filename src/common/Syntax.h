@@ -5,7 +5,8 @@
 #ifndef VCC23_SYNTAX_H
 #define VCC23_SYNTAX_H
 
-namespace common {
+namespace common
+{
   enum class Instruction : unsigned short
   {
     Unknown,
@@ -72,6 +73,74 @@ namespace common {
     EndWithDecLitExitCode,
     EndWithHexLitExitCode,
     EndWithSuccess
+  };
+  
+  // this table MUST stay in sync with the same ordering as the enum above,
+  // or it will cause things to break across the compiler and runtimes.
+  static const char *OPERATION_NAMES[] = {
+    "Unknown",
+    "Nop",
+    "AssignDecLitRef",
+    "AssignHexLitRef",
+    "AssignRefRef",
+    "AddDecLitRef",
+    "AddHexLitRef",
+    "AddRefRef",
+    "SubDecLitRef",
+    "SubHexLitRef",
+    "SubRefRef",
+    "MulDecLitRef",
+    "MulHexLitRef",
+    "MulRefRef",
+    "DivDecLitRef",
+    "DivHexLitRef",
+    "DivRefRef",
+    "NegRef",
+    "XorDecLitRef",
+    "XorHexLitRef",
+    "XorRefRef",
+    "AndDecLitRef",
+    "AndHexLitRef",
+    "AndRefRef",
+    "OrDecLitRef",
+    "OrHexLitRef",
+    "OrRefRef",
+    "LeftShiftDecLitRef",
+    "LeftShiftHexLitRef",
+    "RightShiftDecLitRef",
+    "RightShiftHexLitRef",
+    "CmpDecLitRef",
+    "CmpHexLitRef",
+    "CmpRefRef",
+    "CmpRef",
+    "AbsJumpDecLit",
+    "AbsJumpHexLit",
+    "AbsJumpRef",
+    "RelJumpBackDecLit",
+    "RelJumpBackHexLit",
+    "RelJumpBackRef",
+    "RelJumpForwardDecLit",
+    "RelJumpForwardHexLit",
+    "RelJumpForwardRef",
+    "SelectRamDefault",
+    "SelectRamDecLit",
+    "SelectRamHexLit",
+    "SelectRomDefault",
+    "SelectRomDecLit",
+    "SelectRomHexLit",
+    "ReadInputDeviceRef",
+    "ReadInputDeviceDecLitRef",
+    "ReadInputDeviceHexLitRef",
+    "ReadInputDeviceRefRef",
+    "WriteOutputDeviceDecLit",
+    "WriteOutputDeviceHexLit",
+    "WriteOutputDeviceRef",
+    "PrintDecLitRef",
+    "PrintHexLitRef",
+    "PrintRefRef",
+    "EndWithDecLitExitCode",
+    "EndWithHexLitExitCode",
+    "EndWithSuccess"
   };
 }
 

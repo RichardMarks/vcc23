@@ -9,7 +9,8 @@
 
 using namespace common;
 
-CartReader::CartReader() : valid(false), name("") {}
+CartReader::CartReader() : valid(false)
+{}
 
 void CartReader::readFromFile(const std::string &fileName)
 {
@@ -54,7 +55,7 @@ void CartReader::readFromFile(const std::string &fileName)
   {
     unsigned char byt = 0;
     fp.read(reinterpret_cast<char *>(&byt), sizeof(unsigned char));
-    data[i] = byt;
+    data.push_back(byt);
   }
   
   code.reserve(codeLength);
@@ -62,7 +63,7 @@ void CartReader::readFromFile(const std::string &fileName)
   {
     unsigned char byt = 0;
     fp.read(reinterpret_cast<char *>(&byt), sizeof(unsigned char));
-    code[i] = byt;
+    code.push_back(byt);
   }
   
   fp.close();

@@ -5,6 +5,8 @@
 #ifndef VC23_MEMBLOCK_H
 #define VC23_MEMBLOCK_H
 
+#include <string>
+
 namespace common
 {
   class MemBlock
@@ -15,6 +17,9 @@ namespace common
     unsigned long offset;
   
   public:
+    std::string name;
+    bool debug{false};
+    
     MemBlock();
     
     explicit MemBlock(unsigned long maxSize);
@@ -36,6 +41,22 @@ namespace common
     
     void fill(unsigned long start, unsigned long end, unsigned char fillValue = 0);
     
+    unsigned char peekU8();
+    
+    unsigned short peekU16();
+    
+    unsigned int peekU32();
+    
+    unsigned long peekU64();
+    
+    unsigned char peekAtU8(unsigned long targetOffset);
+    
+    unsigned short peekAtU16(unsigned long targetOffset);
+    
+    unsigned int peekAtU32(unsigned long targetOffset);
+    
+    unsigned long peekAtU64(unsigned long targetOffset);
+    
     unsigned char readU8();
     
     unsigned short readU16();
@@ -52,7 +73,9 @@ namespace common
     
     void writeU64(unsigned long value);
     
-    void hd() const;
+    void hd();
+    
+    std::string hdstr();
   };
 }
 

@@ -95,8 +95,13 @@ std::unordered_set<char> INSTRUCTION_SEPARATORS = {
   'd',
   '&',
   '>',
+  '<',
   '?',
   '#',
+  '/',
+  '`',
+  '^',
+  '|',
   '$',
   '[',
   ']',
@@ -239,19 +244,26 @@ std::vector<std::string> Lexer::tokenize(const std::string &input)
   std::vector<std::string> tokens;
   std::string token;
   
+  std::cout << "tokenize(\"" << input << "\")" << std::endl;
+  
   if (isLabel(input))
   {
     tokens.push_back(input);
   } else
   {
-    
-    token += input[0];
-    tokens.push_back(token);
-    token.clear();
-    for (size_t i = 1; i < input.size(); ++i)
+
+//    token += input[0];
+//    tokens.push_back(token);
+//    token.clear();
+    for (size_t i = 0; i < input.size(); ++i)
     {
       if (input[i] == ' ' || input[i] == '\t' || input[i] == '\n')
       {
+        if (token.size() > 1)
+        {
+          tokens.push_back(token);
+          token.clear();
+        }
         continue;
       }
       

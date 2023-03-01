@@ -40,6 +40,8 @@ namespace vcc23
     {
       return {romTable.begin(), romTable.end()};
     }
+    
+    std::string info() const;
   };
 }
 

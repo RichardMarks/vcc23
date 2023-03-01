@@ -39,6 +39,9 @@ namespace vcc23
     {
       return {lexemes.begin(), lexemes.end()};
     };
+    
+    
+    std::string info();
   };
 }
 

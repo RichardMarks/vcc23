@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <stdexcept>
+#include <sstream>
 
 using namespace vcc23;
 
@@ -57,15 +58,11 @@ std::unordered_set<char> INSTRUCTION_SEPARATORS = {
   'd',
   '&',
   '>',
+  '?',
   '[',
   ']',
   '{',
   '}'};
-
-std::unordered_set<char> INSTRUCTION_CHARACTERS{
-  '~', '.', '+', '-', '*', '/', '_', '^',
-  '&', '|', '<', '>', '=', 'z', 'g', '`',
-  'i', 'r', 'o', 'p', 'q'};
 
 std::unordered_map<char, LexemeType> CHAR_MAP{
   // instructions
@@ -90,6 +87,7 @@ std::unordered_map<char, LexemeType> CHAR_MAP{
   {'o', LexemeType::Instruction},
   {'p', LexemeType::Instruction},
   {'q', LexemeType::Instruction},
+  {'?', LexemeType::Instruction},
   // prefixes
   {'d', LexemeType::DecimalPrefix},
   {'&', LexemeType::HexPrefix},
@@ -118,6 +116,7 @@ std::unordered_map<char, std::string> LEXEME_NAMES{
   {'<', "SHIFTLEFT"},
   {'>', "SHIFTRIGHT"},
   {'=', "COMPARE"},
+  {'?', "COMPARE"},
   {'x', "RAM0"},
   {'y', "RAM1"},
   {'z', "COMPAREZERO|RAM2"},
@@ -264,4 +263,36 @@ LexemeType Lexer::identify(const std::string &token)
   }
   
   return LexemeType::Unknown;
+}
+
+std::string Lexer::info()
+{
+  std::ostringstream os;
+  
+  os << "VCC LEXER INFORMATION:" << std::endl;
+  
+  std::vector<Lexeme> allTokens;
+  
+  auto lineCount = readerPtr->getCodeLineCount();
+  for (size_t i = 0; i < lineCount; i++)
+  {
+    auto line = readerPtr->getCodeLine(i);
+    os << "INPUT LINE: " << line << std::endl;
+    auto rawTokens = Lexer::tokenize(line);
+    os << "RAW TOKENS: ";
+    for (auto &t: rawTokens)
+    {
+      os << t << " ";
+    }
+    os << std::endl;
+    os << "LEXEMES:" << std::endl;
+    auto tokens = Lexer::transform(rawTokens);
+    for (auto &token: tokens)
+    {
+      os << token << std::endl;
+    }
+    os << std::endl;
+  }
+  
+  return os.str();
 }

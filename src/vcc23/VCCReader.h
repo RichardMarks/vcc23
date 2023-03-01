@@ -31,13 +31,20 @@ namespace vcc23
     VCCReader();
     
     void loadVCCFromFile(const std::string &fileName, bool clearAlreadyLoaded = false);
-  
+    
     [[nodiscard]] std::string getCodeLine(size_t index) const;
+    
     [[nodiscard]] std::string getDataLine(size_t index) const;
+    
     [[nodiscard]] LineInfo getRawLineInfo(size_t index) const;
+    
     [[nodiscard]] size_t getCodeLineCount() const;
+    
     [[nodiscard]] size_t getDataLineCount() const;
+    
     [[nodiscard]] size_t getRawLineCount() const;
+    
+    std::string info();
   };
   
 }

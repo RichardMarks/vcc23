@@ -32,6 +32,7 @@ namespace vcc23
       return syntaxTree;
     }
     
+    std::string info();
   };
 }
 

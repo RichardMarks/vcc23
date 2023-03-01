@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <regex>
+#include <sstream>
 
 #include "VCCReader.h"
 
@@ -16,7 +17,7 @@ VCCReader::VCCReader() = default;
 
 void VCCReader::loadVCCFromFile(const std::string &fileName, bool clearAlreadyLoaded)
 {
-  std::regex INSTRUCTION_REGEX("^[~.+\\-*/_^&|<>=zg`iropq]");
+  std::regex INSTRUCTION_REGEX("^[~.+\\-*/_^&|<>=zg`iropq\\?]");
   std::regex LABEL_REGEX(R"(\b\w+\b\s*:)");
   
   if (clearAlreadyLoaded)
@@ -128,4 +129,25 @@ void VCCReader::loadVCCFromFile(const std::string &fileName, bool clearAlreadyLo
 [[nodiscard]] std::string VCCReader::getCodeLine(size_t index) const
 {
   return codeLines.at(index);
+}
+
+std::string VCCReader::info()
+{
+  std::ostringstream os;
+  
+  auto numRawLines = getRawLineCount();
+  auto numDataLines = getDataLineCount();
+  auto numCodeLines = getCodeLineCount();
+  
+  os << "VCC READER INFORMATION:" << std::endl;
+  os << "        Raw Line Count: " << numRawLines << std::endl;
+  os << "       Data Line Count: " << numDataLines << std::endl;
+  os << "       Code Line Count: " << numCodeLines << std::endl;
+  os << "CODE LINES:" << std::endl;
+  for (auto &line: codeLines)
+  {
+    os << line << std::endl;
+  }
+  
+  return os.str();
 }

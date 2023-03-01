@@ -10,116 +10,10 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
+#include <sstream>
 
 using namespace vcc23;
 using namespace common;
-
-// std::unordered_map<Instruction, std::vector<LexemeType>> SYNTAX_MAP{
-//     {Instruction::Nop, {}},
-
-//     {Instruction::AssignDecLitRef, DECLITREF},
-//     {Instruction::AssignHexLitRef, HEXLITREF},
-//     {Instruction::AssignRefRef, REFREF},
-
-//     {Instruction::AddDecLitRef, DECLITREF},
-//     {Instruction::AddHexLitRef, HEXLITREF},
-//     {Instruction::AddRefRef, REFREF},
-
-//     {Instruction::SubDecLitRef, DECLITREF},
-//     {Instruction::SubHexLitRef, HEXLITREF},
-//     {Instruction::SubRefRef, REFREF},
-
-//     {Instruction::MulDecLitRef, DECLITREF},
-//     {Instruction::MulHexLitRef, HEXLITREF},
-//     {Instruction::MulRefRef, REFREF},
-
-//     {Instruction::DivDecLitRef, DECLITREF},
-//     {Instruction::DivHexLitRef, HEXLITREF},
-//     {Instruction::DivRefRef, REFREF},
-
-//     {Instruction::NegRef, REF},
-
-//     {Instruction::XorDecLitRef, DECLITREF},
-//     {Instruction::XorHexLitRef, HEXLITREF},
-//     {Instruction::XorRefRef, REFREF},
-
-//     {Instruction::AndDecLitRef, DECLITREF},
-//     {Instruction::AndHexLitRef, HEXLITREF},
-//     {Instruction::AndRefRef, REFREF},
-
-//     {Instruction::OrDecLitRef, DECLITREF},
-//     {Instruction::OrHexLitRef, HEXLITREF},
-//     {Instruction::OrRefRef, REFREF},
-
-//     {Instruction::LeftShiftDecLitRef, DECLITREF},
-//     {Instruction::LeftShiftHexLitRef, HEXLITREF},
-
-//     {Instruction::CmpDecLitRef, DECLITREF},
-//     {Instruction::CmpHexLitRef, HEXLITREF},
-//     {Instruction::CmpRefRef, REFREF},
-//     {Instruction::CmpRef, REF},
-
-//     // this might cause some problems if not careful..
-//     // have to double check that the instruction is actually "|"
-//     {Instruction::AbsJumpDecLit, {LexemeType::Instruction, LexemeType::DecimalPrefix, LexemeType::DecimalNumber}},
-//     {Instruction::AbsJumpHexLit, {LexemeType::Instruction, LexemeType::HexPrefix, LexemeType::HexNumber}},
-//     {Instruction::AbsJumpRef, {LexemeType::Instruction, LexemeType::AddressPrefix, LexemeType::DecimalNumber}},
-
-//     // have to double check that the instruction is actually ">"
-//     {Instruction::RelJumpForwardDecLit, {LexemeType::Instruction, LexemeType::DecimalPrefix, LexemeType::DecimalNumber}},
-//     {Instruction::RelJumpForwardHexLit, {LexemeType::Instruction, LexemeType::HexPrefix, LexemeType::HexNumber}},
-//     {Instruction::RelJumpForwardRef, {LexemeType::Instruction, LexemeType::AddressPrefix, LexemeType::DecimalNumber}},
-
-//     // have to double check that the instruction is actually "<"
-//     {Instruction::RelJumpBackDecLit, {LexemeType::Instruction, LexemeType::DecimalPrefix, LexemeType::DecimalNumber}},
-//     {Instruction::RelJumpBackHexLit, {LexemeType::Instruction, LexemeType::HexPrefix, LexemeType::HexNumber}},
-//     {Instruction::RelJumpBackRef, {LexemeType::Instruction, LexemeType::AddressPrefix, LexemeType::DecimalNumber}},
-
-//     {Instruction::SelectRamDefault, {LexemeType::RAMSelect}},
-//     {Instruction::SelectRamDecLit, {LexemeType::RAMSelect, LexemeType::IndexPrefix, LexemeType::DecimalPrefix, LexemeType::DecimalNumber, LexemeType::IndexSuffix}},
-//     {Instruction::SelectRamHexLit, {LexemeType::RAMSelect, LexemeType::IndexPrefix, LexemeType::HexPrefix, LexemeType::HexNumber, LexemeType::IndexSuffix}},
-
-//     {Instruction::SelectRomDefault, {LexemeType::ROMSelect}},
-//     {Instruction::SelectRomDecLit, {LexemeType::ROMSelect, LexemeType::IndexPrefix, LexemeType::DecimalPrefix, LexemeType::DecimalNumber, LexemeType::IndexSuffix}},
-//     {Instruction::SelectRomHexLit, {LexemeType::ROMSelect, LexemeType::IndexPrefix, LexemeType::HexPrefix, LexemeType::HexNumber, LexemeType::IndexSuffix}},
-
-//     {Instruction::ReadInputDeviceRef, {LexemeType::DevicePrefix, LexemeType::DecimalNumber, LexemeType::DeviceSuffix, LexemeType::AddressPrefix, LexemeType::DecimalNumber}},
-
-//     {Instruction::ReadInputDeviceDecLitRef, {LexemeType::DecimalPrefix, LexemeType::DecimalNumber, LexemeType::DevicePrefix, LexemeType::DecimalNumber, LexemeType::DeviceSuffix, LexemeType::AddressPrefix, LexemeType::DecimalNumber}},
-//     {Instruction::ReadInputDeviceHexLitRef, {LexemeType::HexPrefix, LexemeType::HexNumber, LexemeType::DevicePrefix, LexemeType::DecimalNumber, LexemeType::DeviceSuffix, LexemeType::AddressPrefix, LexemeType::DecimalNumber}},
-
-//     {Instruction::ReadInputDeviceRefRef, {LexemeType::AddressPrefix, LexemeType::DecimalNumber, LexemeType::DevicePrefix, LexemeType::DecimalNumber, LexemeType::DeviceSuffix, LexemeType::AddressPrefix, LexemeType::DecimalNumber}},
-
-//     {Instruction::WriteOutputDeviceDecLit, {LexemeType::DecimalPrefix, LexemeType::DecimalNumber, LexemeType::DevicePrefix, LexemeType::DecimalNumber, LexemeType::DeviceSuffix}},
-//     {Instruction::WriteOutputDeviceHexLit, {LexemeType::HexPrefix, LexemeType::HexNumber, LexemeType::DevicePrefix, LexemeType::DecimalNumber, LexemeType::DeviceSuffix}},
-
-//     {Instruction::WriteOutputDeviceRef, {LexemeType::AddressPrefix, LexemeType::DecimalNumber, LexemeType::DevicePrefix, LexemeType::DecimalNumber, LexemeType::DeviceSuffix}},
-
-//     {Instruction::PrintDecLitRef, DECLITREF},
-//     {Instruction::PrintHexLitRef, HEXLITREF},
-//     {Instruction::PrintRefRef, REFREF},
-
-//     {Instruction::EndWithDecLitExitCode, DECLIT},
-//     {Instruction::EndWithHexLitExitCode, HEXLIT},
-
-//     {Instruction::EndWithSuccess, {}}
-//     //
-// };
-
-// std::unordered_map<char, Instruction> INSTRUCTION_MAP{
-//     {'~', Instruction::Nop},
-//     //
-// };
-
-// all instruction matchers
-
-//
-
-//
-
-//
-
-//
 
 Parser::Parser(Lexer *lexer) : lexerPtr(lexer)
 {
@@ -206,4 +100,39 @@ void Parser::buildSyntaxTree()
     }
     currentIndex++;
   }
+}
+
+std::string Parser::info()
+{
+  std::ostringstream os;
+  
+  os << "VCC PARSER INFORMATION:" << std::endl;
+  
+  auto *program = reinterpret_cast<ProgramNode *>(syntaxTree.get());
+  auto &instructions = program->getInstructions();
+  auto numInstructions = instructions.size();
+  
+  os << "INSTRUCTION COUNT: " << std::dec << numInstructions << std::endl;
+  os << "INSTRUCTIONS: " << std::endl;
+  for (auto &inode: instructions)
+  {
+    auto *instruction = reinterpret_cast<InstructionNode *>(inode.get());
+    auto &operands = instruction->getOperands();
+    auto numOperands = operands.size();
+    os << "0x" << std::setfill('0') << std::setw(4) << std::hex
+       << static_cast<unsigned short>(instruction->getOpcode())
+       << std::dec << std::setfill('\0')
+       << " " << instruction->typeName() << "(";
+    for (auto i = 0; i < numOperands; i++)
+    {
+      os << operands.at(i);
+      if (i < operands.size() - 1)
+      {
+        os << ", ";
+      }
+    }
+    os << ")" << std::endl;
+  }
+  
+  return os.str();
 }

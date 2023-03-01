@@ -3,6 +3,7 @@
 //
 
 #include "CommandLine.h"
+#include <iostream>
 
 using namespace common;
 
@@ -20,11 +21,13 @@ CommandLine::CommandLine(int argc, char *argv[])
         std::string settingName = arg.substr(2, arg.find('=') - 2);
         std::string settingValue = arg.substr(arg.find('=') + 1);
         settings[settingName] = settingValue;
+        std::cout << "setting: " << settingName << "=" << settingValue << std::endl;
       } else
       {
         // handle flags of the form -flagname
         std::string flagName = arg.substr(1);
         flags[flagName] = true;
+        std::cout << "flag: " << flagName << "=true" << std::endl;
       }
     } else
     {

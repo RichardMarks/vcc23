@@ -386,7 +386,8 @@ input.vcc → [R] → [T] → [P] → [G] → [W] → output.cart
 
 ##### ROM Table
 
-The ROM table consists of all the data declaration bytes padded to have an even number of groups of eight 8-bit unsigned integers.
+The ROM table consists of all the data declaration bytes padded to have an even number of groups of eight 8-bit unsigned
+integers.
 
 ##### Code Stream
 
@@ -558,15 +559,17 @@ Labels to make branching easier:
 ```asm
 ; declare counter variable
 v counter d10 ; initialize counter to 10
-o&ff{2} ; enable number to string printing
+o&ff{2}       ; enable number to string printing
 start:
-p$counter   ; print the counter as a string
-o&a{0}      ; output a newline to stdout
--d1$counter ; decrement counter by one
-z$counter   ; if counter is zero
-g|exit      ;   jump to exit
-g|start     ; else jump to start
+p$counter     ; print the counter as a string
+o&a{0}        ; output a newline to stdout
+-d1$counter   ; decrement counter by one
+z$counter     ; if counter is zero
+g|exit        ;   jump to exit
+^@0@0         ; clear memory address zero to zero
+z@0           ; if memory address zero is zero (TRUE because of above)
+g|start       ;   jump to start
 exit:
-o&0{2}      ; disable number to string printing
-q           ; exit with success code 0
+o&0{2}        ; disable number to string printing
+q             ; exit with success code 0
 ```

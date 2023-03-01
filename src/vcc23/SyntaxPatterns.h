@@ -156,10 +156,54 @@ namespace vcc23
         LexemeType::DecimalNumber,
         LexemeType::DeviceSuffix
       };
+    
+    /*
+     *          SELECT: {0x1} "`"
+             RAM: {0xa} "R"
+    INDEX_PREFIX: {0x7} "["
+          NUMBER: {0xb} "1024"
+    INDEX_SUFFIX: {0x8} "]"
+     * */
+    
+    const std::vector<LexemeType> RAMSELECT
+      {
+        LexemeType::RAMSelect
+      };
+    const std::vector<LexemeType> RAMSELECTDECLIT
+      {
+        LexemeType::RAMSelect,
+        LexemeType::IndexPrefix,
+        LexemeType::DecimalPrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::IndexSuffix
+      };
+    const std::vector<LexemeType> RAMSELECTHEXLIT
+      {
+        LexemeType::RAMSelect,
+        LexemeType::IndexPrefix,
+        LexemeType::HexPrefix,
+        LexemeType::HexNumber,
+        LexemeType::IndexSuffix
+      };
+    
+    const std::vector<LexemeType> ROMSELECT
+      {
+        LexemeType::ROMSelect,
+        LexemeType::IndexPrefix,
+        LexemeType::DecimalNumber,
+        LexemeType::IndexSuffix
+      };
+  
   public:
     SyntaxPatterns(SyntaxPatterns const &) = delete;
     
     SyntaxPatterns &operator=(SyntaxPatterns const &) = delete;
+    
+    static const std::vector<LexemeType> &ramSelect()
+    { return SyntaxPatterns::instance().RAMSELECT; };
+    
+    static const std::vector<LexemeType> &romSelect()
+    { return SyntaxPatterns::instance().ROMSELECT; };
     
     static const std::vector<LexemeType> &insDecLit()
     { return SyntaxPatterns::instance().INSDECLIT; };

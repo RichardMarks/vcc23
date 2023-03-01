@@ -243,8 +243,8 @@ std::vector<std::string> Lexer::tokenize(const std::string &input)
 {
   std::vector<std::string> tokens;
   std::string token;
-  
-  std::cout << "tokenize(\"" << input << "\")" << std::endl;
+
+//  std::cout << "tokenize(\"" << input << "\")" << std::endl;
   
   if (isLabel(input))
   {

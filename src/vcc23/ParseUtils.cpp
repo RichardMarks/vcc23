@@ -9,17 +9,17 @@
 #include <iostream>
 
 using namespace vcc23;
-
-
-std::vector<LexemeType> DECLITREF{LexemeType::DecimalPrefix, LexemeType::DecimalNumber, LexemeType::AddressPrefix,
-                                  LexemeType::DecimalNumber};
-std::vector<LexemeType> DECLIT{LexemeType::DecimalPrefix, LexemeType::DecimalNumber};
-std::vector<LexemeType> HEXLITREF{LexemeType::HexPrefix, LexemeType::HexNumber, LexemeType::AddressPrefix,
-                                  LexemeType::DecimalNumber};
-std::vector<LexemeType> HEXLIT{LexemeType::HexPrefix, LexemeType::HexNumber};
-std::vector<LexemeType> REFREF{LexemeType::AddressPrefix, LexemeType::DecimalNumber, LexemeType::AddressPrefix,
-                               LexemeType::DecimalNumber};
-std::vector<LexemeType> REF{LexemeType::AddressPrefix, LexemeType::DecimalNumber};
+//
+//
+//std::vector<LexemeType> DECLITREF{LexemeType::DecimalPrefix, LexemeType::DecimalNumber, LexemeType::AddressPrefix,
+//                                  LexemeType::DecimalNumber};
+//std::vector<LexemeType> DECLIT{LexemeType::DecimalPrefix, LexemeType::DecimalNumber};
+//std::vector<LexemeType> HEXLITREF{LexemeType::HexPrefix, LexemeType::HexNumber, LexemeType::AddressPrefix,
+//                                  LexemeType::DecimalNumber};
+//std::vector<LexemeType> HEXLIT{LexemeType::HexPrefix, LexemeType::HexNumber};
+//std::vector<LexemeType> REFREF{LexemeType::AddressPrefix, LexemeType::DecimalNumber, LexemeType::AddressPrefix,
+//                               LexemeType::DecimalNumber};
+//std::vector<LexemeType> REF{LexemeType::AddressPrefix, LexemeType::DecimalNumber};
 
 
 bool ParseUtils::isValidAddressToken(const std::string &token)
@@ -110,8 +110,9 @@ bool ParseUtils::compare(
     
     bool typeFailed = !inputToken.isType(expectedType);
     
-    std::cout << "comparing input \"" << inputToken.data << "\" " << std::hex << (unsigned) inputToken.type << std::dec
-              << " and expected " << std::hex << (unsigned) expectedType << std::dec << std::endl;
+    std::cout << "comparing input data:\"" << inputToken.data << "\" type: 0x" << std::hex << (unsigned) inputToken.type
+              << std::dec
+              << " and expected type: 0x" << std::hex << (unsigned) expectedType << std::dec << std::endl;
     if (typeFailed)
     {
       // edge case - addressing via x,y,z

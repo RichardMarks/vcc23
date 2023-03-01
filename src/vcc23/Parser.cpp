@@ -94,6 +94,9 @@ void Parser::buildSyntaxTree()
       {
         std::cerr << "unknown token: " << token.data << std::endl;
       }
+    } else if (token.isType(LexemeType::Label))
+    {
+      std::cout << "PARSE LABEL " << token.data << "=" << currentIndex << std::endl;
     } else
     {
       std::cerr << "unexpected token type: 0x" << std::hex << static_cast<int>(token.type) << std::dec << std::endl;

@@ -17,6 +17,7 @@ set(VCC23_SOURCES
         Lexeme.h
         Lexer.cpp
         Lexer.h
+        MemorySelectInstruction.cpp
         MultiplyInstruction.cpp
         NegateInstruction.cpp
         NopInstruction.cpp

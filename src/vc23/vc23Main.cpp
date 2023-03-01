@@ -21,10 +21,16 @@ int main(int argc, char *argv[])
     
     ConsoleRuntime runtime;
     
-    if (cmdLine.hasFlag("debug"))
+    auto execLimitSetting = cmdLine.getSetting("execlimit");
+    if (!execLimitSetting.empty())
     {
-      runtime.setFlag(RuntimeFlags::Debug);
+      auto execLimt = std::stoi(execLimitSetting);
+      runtime.setExecLimit(execLimt);
     }
+    
+    runtime.initialize();
+    
+    runtime.load(cartFile);
     
     if (cmdLine.hasFlag("trace"))
     {
@@ -36,19 +42,37 @@ int main(int argc, char *argv[])
       runtime.setFlag(RuntimeFlags::TraceDump);
     }
     
-    runtime.initialize();
+    if (cmdLine.hasFlag("noexec"))
+    {
+      runtime.setFlag(RuntimeFlags::NoExec);
+    }
     
-    runtime.load(cartFile);
+    if (cmdLine.hasFlag("showopsize"))
+    {
+      runtime.setFlag(RuntimeFlags::ShowOpSize);
+    }
+    
+    if (cmdLine.hasFlag("tracejump"))
+    {
+      runtime.setFlag(RuntimeFlags::TraceJump);
+    }
     
     if (cmdLine.hasFlag("debug"))
     {
+      runtime.setFlag(RuntimeFlags::Debug);
       runtime.dumpDataBlock();
       runtime.dumpCodeBlock();
     }
     
-    while (runtime.running())
+    if (cmdLine.hasFlag("describecode"))
     {
-      runtime.step();
+      runtime.describeCode();
+    } else
+    {
+      while (runtime.running())
+      {
+        runtime.step();
+      }
     }
     
     runtime.shutdown();

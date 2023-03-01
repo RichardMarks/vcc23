@@ -10,10 +10,32 @@
 #include <vector>
 #include <functional>
 #include <memory>
+#include <bitset>
 
 #include "ConsoleRuntime.h"
 #include "CartReader.h"
 
+#include <cstdint>
+
+template<typename T>
+std::string hexdump(T value)
+{
+  std::ostringstream os;
+  auto *bytes = reinterpret_cast<uint8_t *>(&value);
+  
+  std::size_t num_bytes = sizeof(T);
+  
+  os << std::setfill('0') << std::hex << std::uppercase;
+  
+  for (std::size_t i = 0; i < num_bytes; ++i)
+  {
+    os << std::setw(2) << static_cast<int>(bytes[i]) << " ";
+  }
+  
+  os << std::dec;
+  
+  return os.str();
+}
 
 using namespace vc23;
 using namespace common;
@@ -62,6 +84,10 @@ void ConsoleRuntime::initialize()
   ram = std::make_unique<MemBlock>(constants::RUNTIME_RAM_SIZE);
   data = std::make_unique<MemBlock>();
   code = std::make_unique<MemBlock>();
+  
+  ram->name = "RAM";
+  data->name = "DATA";
+  code->name = "CODE";
   
   auto stdInDev = std::make_unique<StandardInputDevice>();
   inputDevices.emplace(stdInDev->getID(), std::move(stdInDev));
@@ -151,7 +177,15 @@ void ConsoleRuntime::initialize()
     auto literal = operands.at(0);
     auto address = operands.at(1);
     
-    writeU8ToRAM(readU8FromRAM(address) - literal, address);
+    auto literald = static_cast<double>(literal);
+    auto diff = static_cast<double>(readU8FromRAM(address)) - literald;
+    if (diff < 0)
+    {
+      diff = 0;
+    }
+    auto diffu8 = static_cast<unsigned char>(diff);
+    
+    writeU8ToRAM(diffu8, address);
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::SubHexLitRef, {
@@ -402,103 +436,121 @@ void ConsoleRuntime::initialize()
   // EXECUTION PATH MANIPULATION
   
   VC23REGISTEROPERATIONMETHOD(Instruction::AbsJumpDecLit, {
+    auto literal = operands.at(0);
+    
+    traceJump(true, code->tell(), literal);
+    
     if (lastComparison != 0)
     {
       return;
     }
-    
-    auto literal = operands.at(0);
     
     code->seek(literal);
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::AbsJumpHexLit, {
+    auto literal = operands.at(0);
+    
+    traceJump(true, code->tell(), literal);
+    
     if (lastComparison != 0)
     {
       return;
     }
-    
-    auto literal = operands.at(0);
     
     code->seek(literal);
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::AbsJumpRef, {
+    auto address = operands.at(0);
+    auto offset = readU8FromRAM(address);
+    
+    traceJump(true, code->tell(), offset);
+    
     if (lastComparison != 0)
     {
       return;
     }
-    
-    auto address = operands.at(0);
-    auto offset = readU8FromRAM(address);
     
     code->seek(offset);
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::RelJumpBackDecLit, {
+    auto literal = operands.at(0);
+    
+    traceJump(false, code->tell(), code->tell() - literal);
+    
     if (lastComparison != 0)
     {
       return;
     }
-    
-    auto literal = operands.at(0);
     
     code->seek(code->tell() - literal);
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::RelJumpBackHexLit, {
+    auto literal = operands.at(0);
+    
+    traceJump(false, code->tell(), code->tell() - literal);
+    
     if (lastComparison != 0)
     {
       return;
     }
-    
-    auto literal = operands.at(0);
     
     code->seek(code->tell() - literal);
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::RelJumpBackRef, {
+    auto address = operands.at(0);
+    auto offset = readU8FromRAM(address);
+    
+    traceJump(false, code->tell(), code->tell() - offset);
+    
     if (lastComparison != 0)
     {
       return;
     }
-    
-    auto address = operands.at(0);
-    auto offset = readU8FromRAM(address);
     
     code->seek(code->tell() - offset);
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::RelJumpForwardDecLit, {
+    auto literal = operands.at(0);
+    
+    traceJump(false, code->tell(), code->tell() + literal);
+    
     if (lastComparison != 0)
     {
       return;
     }
-    
-    auto literal = operands.at(0);
     
     code->seek(code->tell() + literal);
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::RelJumpForwardHexLit, {
+    auto literal = operands.at(0);
+    
+    traceJump(false, code->tell(), code->tell() + literal);
+    
     if (lastComparison != 0)
     {
       return;
     }
-    
-    auto literal = operands.at(0);
     
     code->seek(code->tell() + literal);
   });
   
   VC23REGISTEROPERATIONMETHOD(Instruction::RelJumpForwardRef, {
+    auto address = operands.at(0);
+    auto offset = readU8FromRAM(address);
+    
+    traceJump(false, code->tell(), code->tell() + offset);
+    
     if (lastComparison != 0)
     {
       return;
     }
-    
-    auto address = operands.at(0);
-    auto offset = readU8FromRAM(address);
     
     code->seek(code->tell() + offset);
   });
@@ -602,7 +654,7 @@ void ConsoleRuntime::initialize()
   
   VC23REGISTEROPERATIONMETHOD(Instruction::WriteOutputDeviceDecLit, {
     auto literal = operands.at(0);
-    auto deviceIndex = operands.at(0);
+    auto deviceIndex = operands.at(1);
     
     auto &device = outputDevices.at(deviceIndex);
     device->writeU8(literal);
@@ -610,7 +662,7 @@ void ConsoleRuntime::initialize()
   
   VC23REGISTEROPERATIONMETHOD(Instruction::WriteOutputDeviceHexLit, {
     auto literal = operands.at(0);
-    auto deviceIndex = operands.at(0);
+    auto deviceIndex = operands.at(1);
     
     auto &device = outputDevices.at(deviceIndex);
     device->writeU8(literal);
@@ -619,7 +671,7 @@ void ConsoleRuntime::initialize()
   VC23REGISTEROPERATIONMETHOD(Instruction::WriteOutputDeviceRef, {
     // o @3 {0}
     auto address = operands.at(0);
-    auto deviceIndex = operands.at(0);
+    auto deviceIndex = operands.at(1);
     auto value = readU8FromRAM(address);
     
     auto &device = outputDevices.at(deviceIndex);
@@ -717,11 +769,20 @@ void ConsoleRuntime::startup()
 
 void ConsoleRuntime::step()
 {
+  if (execLimit != 0)
+  {
+    if (++steps >= execLimit)
+    {
+      code->seek(code->size());
+      return;
+    }
+  }
+  
   if (
     ((flags & RuntimeFlags::Trace) == RuntimeFlags::Trace) &&
     ((flags & RuntimeFlags::TraceDump) == RuntimeFlags::TraceDump))
   {
-    std::cout << "BEFORE STEP:" << std::endl;
+    std::cout << "BEFORE STEP " << std::dec << steps << ":" << std::endl;
     dumpRAM();
   }
   // read the operation code
@@ -733,10 +794,13 @@ void ConsoleRuntime::step()
   // read each operand into a single vector for easy access
   std::vector<unsigned long> operandValues;
   
+  unsigned short operationTotalSize = sizeof(unsigned short) + sizeof(unsigned char);
+  
   for (unsigned i = 0; i < numOperands; i++)
   {
     // read each operand
     unsigned char opSize = code->readU8();
+    operationTotalSize += opSize;
     if (opSize == 1)
     {
       unsigned char opValue = code->readU8();
@@ -769,6 +833,7 @@ void ConsoleRuntime::step()
     
     if (hasOperationMethod(operationName))
     {
+      
       std::ostringstream ss;
       ss << "*EXECUTE AT 0x"
          << std::setfill('0')
@@ -793,7 +858,24 @@ void ConsoleRuntime::step()
       }
       ss << ")";
       traceMessage(ss.str());
-      executeOperationMethod(operationName, operandValues);
+      
+      if ((flags & RuntimeFlags::ShowOpSize) == RuntimeFlags::ShowOpSize)
+      {
+        std::cout << "*            OPERATION: " << operationName << std::endl;
+        std::cout << "*    INSTRUCTION BYTES: " << std::dec << sizeof(unsigned short) + sizeof(unsigned char)
+                  << std::endl;
+        std::cout << "*        OPERAND BYTES: " << std::dec
+                  << operationTotalSize - (sizeof(unsigned short) + sizeof(unsigned char)) << std::endl;
+        std::cout << "*TOTAL OPERATION BYTES: " << std::dec << operationTotalSize << std::endl;
+      }
+      
+      if ((flags & RuntimeFlags::NoExec) == RuntimeFlags::NoExec)
+      {
+        std::cout << "*EXECUTION SKIPPED BECAUSE NOEXEC FLAG ENABLED" << std::endl;
+      } else
+      {
+        executeOperationMethod(operationName, operandValues);
+      }
     } else
     {
       std::ostringstream ss;
@@ -814,7 +896,7 @@ void ConsoleRuntime::step()
     ((flags & RuntimeFlags::Trace) == RuntimeFlags::Trace) &&
     ((flags & RuntimeFlags::TraceDump) == RuntimeFlags::TraceDump))
   {
-    std::cout << "AFTER STEP:" << std::endl;
+    std::cout << "AFTER STEP " << std::dec << steps << ":" << std::endl;
     dumpRAM();
   }
 }
@@ -900,9 +982,25 @@ void ConsoleRuntime::load(const std::string &filePath)
   startup();
 }
 
+bool ConsoleRuntime::hasFlag(RuntimeFlags flag)
+{
+  return ((flags & flag) == flag);
+}
+
 void ConsoleRuntime::setFlag(RuntimeFlags flag)
 {
   flags = flags | flag;
+  if (RuntimeFlags::Debug == (flags & RuntimeFlags::Debug))
+  {
+    ram->debug = true;
+    code->debug = true;
+    data->debug = true;
+  } else
+  {
+    ram->debug = false;
+    code->debug = false;
+    data->debug = false;
+  }
 }
 
 void ConsoleRuntime::clearFlag(RuntimeFlags flag)
@@ -929,4 +1027,139 @@ void ConsoleRuntime::debugMessage(const std::string &message)
   {
     std::cout << "DEBUG: " << message << std::endl;
   }
+}
+
+
+void ConsoleRuntime::traceJump(bool absolute, unsigned long origin, unsigned long target) const
+{
+  if ((flags & RuntimeFlags::TraceJump) != RuntimeFlags::TraceJump)
+  {
+    return;
+  }
+  
+  std::cout << "* LAST COMPARISON: " << std::dec << (int) lastComparison << std::endl;
+  
+  if (lastComparison != 0)
+  {
+    std::cout << "* NO JUMP" << std::endl;
+    return;
+  }
+  
+  if (absolute)
+  {
+    std::cout << "* ABSOLUTE JUMP FROM "
+              << std::dec << origin << "(" << hexdump<unsigned short>(origin)
+              << ") TO "
+              << std::dec << target << "(" << hexdump<unsigned short>(target) << ")"
+              << std::endl;
+  } else
+  {
+    double diff = static_cast<double>(target) - static_cast<double>(origin);
+    std::cout << "* RELATIVE JUMP "
+              << std::dec << (diff >= 0 ? "+" : "") << static_cast<long>(diff)
+              << " FROM "
+              << std::dec << origin << "(" << hexdump<unsigned short>(origin)
+              << ") TO "
+              << std::dec << target << "(" << hexdump<unsigned short>(target) << ")"
+              << std::endl;
+  }
+  std::cout << "* BYTE AT ORIGIN: " << hexdump<unsigned char>(code->peekAtU8(origin)) << std::endl;
+  std::cout << "* BYTE AT TARGET: " << hexdump<unsigned char>(code->peekAtU8(target)) << std::endl;
+}
+
+void ConsoleRuntime::describeCode()
+{
+  std::cout << "DESCRIBING CODE BLOCK" << std::endl;
+  code->hd();
+  code->seek(0);
+  std::cout << std::setfill('-') << std::setw(40) << "-" << std::endl;
+  
+  while (!code->eom())
+  {
+    std::ostringstream os;
+    
+    os << std::setw(8) << std::setfill('0') << std::hex << code->tell() << ": " << std::dec;
+    
+    // read the operation code
+    unsigned short opcode = code->readU16();
+    
+    // cast the operation code to the instruction enum
+    auto instruction = static_cast<Instruction>(opcode);
+    
+    if (operationTable.count(instruction))
+    {
+      auto operationName = operationTable.at(instruction);
+      if (hasOperationMethod(operationName))
+      {
+        os << std::setfill('\0') << std::setw(32) << hexdump<unsigned short>(opcode) << " ;" << operationName
+           << std::endl;
+      }
+    } else
+    {
+      os << std::setfill('\0') << std::setw(32) << hexdump<unsigned short>(opcode) << " ; UNKNOWN INSTRUCTION"
+         << std::endl;
+    }
+    
+    
+    os << std::setw(8) << std::setfill('0') << std::hex << code->tell() << ": " << std::dec;
+    
+    
+    // read the number of operands
+    unsigned char numOperands = code->readU8();
+    os << std::setfill('\0') << std::setw(32) << hexdump<unsigned char>(numOperands) << " ; number of operands"
+       << std::endl;
+    
+    for (unsigned i = 0; i < numOperands; i++)
+    {
+      
+      os << std::setw(8) << std::setfill('0') << std::hex << code->tell() << ": " << std::dec;
+      
+      // read each operand
+      unsigned char opSize = code->readU8();
+      os << std::setfill('\0') << std::setw(32) << hexdump<unsigned char>(numOperands) << " ; operand size in bytes"
+         << std::endl;
+      
+      
+      os << std::setw(8) << std::setfill('0') << std::hex << code->tell() << ": " << std::dec;
+      
+      if (opSize == 1)
+      {
+        unsigned char opValue = code->readU8();
+        os << std::setfill('\0') << std::setw(32) << hexdump<unsigned char>(opValue) << " ; operand value decimal: "
+           << std::dec
+           << ((long) opValue) << std::endl;
+      } else if (opSize == 2)
+      {
+        unsigned short opValue = code->readU16();
+        os << std::setfill('\0') << std::setw(32) << hexdump<unsigned short>(opValue) << " ; operand value decimal: "
+           << std::dec
+           << ((long) opValue) << std::endl;
+      } else if (opSize == 4)
+      {
+        unsigned int opValue = code->readU32();
+        os << std::setfill('\0') << std::setw(32) << hexdump<unsigned int>(opValue) << " ; operand value decimal: "
+           << std::dec
+           << ((long) opValue) << std::endl;
+      } else if (opSize == 8)
+      {
+        unsigned long opValue = code->readU64();
+        os << std::setfill('\0') << std::setw(32) << hexdump<unsigned long>(opValue) << " ; operand value decimal: "
+           << std::dec
+           << ((long) opValue) << std::endl;
+      } else
+      {
+        throw std::runtime_error("INVALID OPERAND SIZE " + std::to_string(opSize));
+      }
+    }
+    std::cout << os.str();
+  }
+  
+  std::cout << std::setfill('-') << std::setw(40) << "-" << std::endl;
+  
+  code->seek(0);
+}
+
+void ConsoleRuntime::setExecLimit(int limit)
+{
+  execLimit = static_cast<unsigned long>(limit);
 }

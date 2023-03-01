@@ -20,27 +20,31 @@ namespace vc23
     constexpr size_t RUNTIME_RAM_SIZE = 0x80;
   }
   
-  enum class RuntimeFlags : unsigned char
+  typedef unsigned int RuntimeFlagType;
+  enum class RuntimeFlags : RuntimeFlagType
   {
     Default = 0x00,
     Debug = 0x01,
     Trace = 0x02,
     TraceDump = 0x04,
+    NoExec = 0x08,
+    ShowOpSize = 0x10,
+    TraceJump = 0x20,
   };
   
   static RuntimeFlags operator|(RuntimeFlags a, RuntimeFlags b)
   {
-    return static_cast<RuntimeFlags>(static_cast<unsigned char>(a) | static_cast<unsigned char>(b));
+    return static_cast<RuntimeFlags>(static_cast<RuntimeFlagType>(a) | static_cast<RuntimeFlagType>(b));
   }
   
   static RuntimeFlags operator&(RuntimeFlags a, RuntimeFlags b)
   {
-    return static_cast<RuntimeFlags>(static_cast<unsigned char>(a) & static_cast<unsigned char>(b));
+    return static_cast<RuntimeFlags>(static_cast<RuntimeFlagType>(a) & static_cast<RuntimeFlagType>(b));
   }
   
   static RuntimeFlags operator~(RuntimeFlags a)
   {
-    return static_cast<RuntimeFlags>(~static_cast<unsigned char>(a));
+    return static_cast<RuntimeFlags>(~static_cast<RuntimeFlagType>(a));
   }
   
   enum class RuntimeStatus : unsigned char
@@ -69,16 +73,26 @@ namespace vc23
     
     std::unordered_map<Instruction, std::string> operationTable;
     
+    unsigned long steps{0};
+    unsigned long execLimit{0};
+    
     void setStatus(RuntimeStatus nextStatus);
     
     void traceMessage(const std::string &message);
     
     void debugMessage(const std::string &message);
+    
+    void traceJump(bool absolute, unsigned long origin, unsigned long target) const;
   
   public:
     ConsoleRuntime() = default;
     
+    bool hasFlag(RuntimeFlags flag);
+    
     void setFlag(RuntimeFlags flag);
+    
+    [[nodiscard]] RuntimeFlags getFlags() const
+    { return flags; }
     
     void clearFlag(RuntimeFlags flag);
     
@@ -115,6 +129,10 @@ namespace vc23
     unsigned char readU8FromRAM(unsigned long offset) override;
     
     void writeU8ToRAM(unsigned char value, unsigned long offset) override;
+    
+    void describeCode();
+    
+    void setExecLimit(int limit);
   };
 }
 

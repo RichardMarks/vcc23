@@ -21,7 +21,11 @@ namespace vcc23
     ROMSelect,
     RAMSelect,
     DecimalNumber,
-    HexNumber
+    HexNumber,
+    RegisterPrefix,
+    VariablePrefix,
+    Identifier,
+    Label
   };
 }
 

@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <stdexcept>
 #include <sstream>
+#include <cctype>
 
 using namespace vcc23;
 
@@ -53,12 +54,50 @@ bool isHexNumber(const std::string &str)
   }
 }
 
+bool isLabel(const std::string &str)
+{
+  if (str.empty() || !std::isalpha(str[0]) && str[0] != '_')
+  {
+    return false;
+  }
+  
+  for (std::size_t i = 1; i < str.size() - 1; ++i)
+  {
+    if (!std::isalnum(str[i]) && str[i] != '_')
+    {
+      return false;
+    }
+  }
+  
+  return str.back() == ':';
+}
+
+bool isIdentifier(const std::string &str)
+{
+  if (str.empty() || !std::isalpha(str[0]) && str[0] != '_')
+  {
+    return false;
+  }
+  
+  for (std::size_t i = 1; i < str.size(); ++i)
+  {
+    if (!std::isalnum(str[i]) && str[i] != '_')
+    {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
 std::unordered_set<char> INSTRUCTION_SEPARATORS = {
   '@',
   'd',
   '&',
   '>',
   '?',
+  '#',
+  '$',
   '[',
   ']',
   '{',
@@ -94,6 +133,8 @@ std::unordered_map<char, LexemeType> CHAR_MAP{
   {'@', LexemeType::AddressPrefix},
   {'{', LexemeType::DevicePrefix},
   {'[', LexemeType::IndexPrefix},
+  {'#', LexemeType::RegisterPrefix},
+  {'$', LexemeType::VariablePrefix},
   // suffixes
   {'}', LexemeType::DeviceSuffix},
   {']', LexemeType::IndexSuffix},
@@ -133,6 +174,8 @@ std::unordered_map<char, std::string> LEXEME_NAMES{
   {'@', "ADDRESS_PREFIX"},
   {'{', "DEVICE_PREFIX"},
   {'[', "INDEX_PREFIX"},
+  {'#', "REGISTER_PREFIX"},
+  {'$', "VARIABLE_PREFIX"},
   // suffixes
   {'}', "DEVICE_SUFFIX"},
   {']', "INDEX_SUFFIX"},
@@ -149,6 +192,14 @@ std::string Lexeme::name() const
     {
       return LEXEME_NAMES.at(character);
     }
+  }
+  if (isType(LexemeType::Label))
+  {
+    return "LABEL: " + data;
+  }
+  if (isType(LexemeType::Identifier))
+  {
+    return "IDENTIFIER: " + data;
   }
   if (isType(LexemeType::DecimalNumber))
   {
@@ -188,32 +239,38 @@ std::vector<std::string> Lexer::tokenize(const std::string &input)
   std::vector<std::string> tokens;
   std::string token;
   
-  token += input[0];
-  tokens.push_back(token);
-  token.clear();
-  for (size_t i = 1; i < input.size(); ++i)
+  if (isLabel(input))
   {
-    if (input[i] == ' ' || input[i] == '\t' || input[i] == '\n')
-    {
-      continue;
-    }
+    tokens.push_back(input);
+  } else
+  {
     
-    if (INSTRUCTION_SEPARATORS.count(input[i]))
+    token += input[0];
+    tokens.push_back(token);
+    token.clear();
+    for (size_t i = 1; i < input.size(); ++i)
     {
-      if (!token.empty())
+      if (input[i] == ' ' || input[i] == '\t' || input[i] == '\n')
       {
-        tokens.push_back(token);
+        continue;
       }
-      token.clear();
-      token += input[i];
-      tokens.push_back(token);
-      token.clear();
-    } else
-    {
-      token += input[i];
+      
+      if (INSTRUCTION_SEPARATORS.count(input[i]))
+      {
+        if (!token.empty())
+        {
+          tokens.push_back(token);
+        }
+        token.clear();
+        token += input[i];
+        tokens.push_back(token);
+        token.clear();
+      } else
+      {
+        token += input[i];
+      }
     }
   }
-  
   if (!token.empty())
   {
     tokens.push_back(token);
@@ -253,10 +310,22 @@ LexemeType Lexer::identify(const std::string &token)
       return CHAR_MAP.at(character);
     }
   }
+  
+  if (isLabel(token))
+  {
+    return LexemeType::Label;
+  }
+  
+  if (isIdentifier(token))
+  {
+    return LexemeType::Identifier;
+  }
+  
   if (isDecimalNumber(token))
   {
     return LexemeType::DecimalNumber;
   }
+  
   if (isHexNumber(token))
   {
     return LexemeType::HexNumber;

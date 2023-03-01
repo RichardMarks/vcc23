@@ -74,6 +74,7 @@ void VCCReader::loadVCCFromFile(const std::string &fileName, bool clearAlreadyLo
           {
             // TODO: capture the label information
             lineType = LineType::Label;
+            codeLines.push_back(line);
             std::cout << "Identified a label, however labels are not implemented at this time." << std::endl;
           } else if (std::regex_search(line, INSTRUCTION_REGEX))
           {

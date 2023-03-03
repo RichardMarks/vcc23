@@ -374,3 +374,51 @@ MatchResult ParseUtils::matchRefDev(const std::vector<Lexeme> &inputLexemes, uns
   };
   return result;
 }
+
+MatchResult ParseUtils::matchRamDecLit(const std::vector<Lexeme> &inputLexemes, unsigned long inputOffset)
+{
+  auto &litLexeme = inputLexemes[inputOffset + 3];
+  
+  MatchResult result{
+    4, {
+      ParseUtils::parseULong(litLexeme.data),
+    }
+  };
+  return result;
+}
+
+MatchResult ParseUtils::matchRamHexLit(const std::vector<Lexeme> &inputLexemes, unsigned long inputOffset)
+{
+  auto &litLexeme = inputLexemes[inputOffset + 3];
+  
+  MatchResult result{
+    4, {
+      ParseUtils::parseULong(litLexeme.data, 16),
+    }
+  };
+  return result;
+}
+
+MatchResult ParseUtils::matchRomDecLit(const std::vector<Lexeme> &inputLexemes, unsigned long inputOffset)
+{
+  auto &litLexeme = inputLexemes[inputOffset + 3];
+  
+  MatchResult result{
+    4, {
+      ParseUtils::parseULong(litLexeme.data),
+    }
+  };
+  return result;
+}
+
+MatchResult ParseUtils::matchRomHexLit(const std::vector<Lexeme> &inputLexemes, unsigned long inputOffset)
+{
+  auto &litLexeme = inputLexemes[inputOffset + 3];
+  
+  MatchResult result{
+    4, {
+      ParseUtils::parseULong(litLexeme.data, 16),
+    }
+  };
+  return result;
+}
